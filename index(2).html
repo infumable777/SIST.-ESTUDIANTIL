@@ -261,7 +261,7 @@
             background: var(--blue-sidebar);
         }
 
-        /* BOTÓN DE VOLVER AL INICIO (EN PERFIL) */
+        /* BOTÓN DE VOLVER GENERAL */
         .btn-back-home {
             background: var(--navy-dark);
             color: #fff;
@@ -370,6 +370,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .aula-item:hover {
+            background: #f8fafc;
+            transform: translateX(3px);
+            border-color: var(--blue-card);
         }
 
         .aula-item h3 { font-size: 1.1rem; }
@@ -382,6 +390,76 @@
             border-radius: 15px;
             font-size: 0.85rem;
             font-weight: 600;
+        }
+
+        /* DETALLE DE AULA Y PESTAÑAS */
+        .classroom-detail-container {
+            max-width: 800px;
+        }
+
+        .classroom-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn.active {
+            background: var(--navy-dark);
+            color: #fff;
+        }
+
+        .student-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .student-row {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .student-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--navy-dark);
+        }
+
+        .student-action select, .student-action input {
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+            font-size: 0.9rem;
+            background: #fdfdfd;
+        }
+
+        .student-record {
+            font-size: 0.88rem;
+            color: #555;
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 6px;
         }
 
         /* CHAT */
@@ -397,6 +475,7 @@
             width: 250px;
             border-right: 1px solid var(--border-light);
             padding: 15px;
+            overflow-y: auto;
         }
 
         .search-box {
@@ -419,9 +498,13 @@
             font-size: 0.9rem;
             display: flex;
             justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            transition: background 0.2s;
         }
 
-        .contact-item.active { background: #f0f4fd; border-left: 4px solid var(--blue-sidebar); }
+        .contact-item:hover { background: #f8fafc; }
+        .contact-item.active { background: #f0f4fd; border-left: 4px solid var(--blue-sidebar); font-weight: bold; }
 
         .chat-main {
             flex: 1;
@@ -432,35 +515,50 @@
             background: #fff;
         }
 
-        .chat-messages { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+        .chat-header-info {
+            font-weight: bold;
+            font-size: 1rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--navy-dark);
+            margin-bottom: 15px;
+        }
+
+        .chat-messages { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            overflow-y: auto; 
+            flex: 1;
+            padding-right: 5px;
+        }
 
         .chat-bubble {
             max-width: 70%;
             padding: 12px 16px;
             border-radius: 15px;
             font-size: 0.9rem;
+            word-wrap: break-word;
         }
 
         .chat-bubble.left {
             background: #aed0f3;
             align-self: flex-start;
+            color: #0b2545;
         }
 
         .chat-bubble.right {
             background: #99c2ec;
             align-self: flex-end;
-        }
-
-        .chat-bubble.emoji-only {
-            background: #99c2ec;
-            width: fit-content;
-            font-size: 1.2rem;
+            color: #0b2545;
         }
 
         .chat-input-area {
             display: flex;
             gap: 10px;
             margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-light);
         }
 
         .chat-input-area input {
@@ -479,7 +577,10 @@
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
+            transition: background 0.2s;
         }
+
+        .btn-send:hover { background: var(--navy-dark); }
 
         /* NOTIFICACIONES */
         .notifications-list { max-width: 700px; }
@@ -920,64 +1021,83 @@
 
             <!-- PANTALLA: MIS AULAS -->
             <section id="view-aulas" class="content-view hidden">
-                <h1 class="view-title">MIS AULAS</h1>
-                <div class="card-panel aulas-container">
-                    <div class="aula-item">
-                        <div>
-                            <h3>2°2 – Biologia</h3>
-                            <p class="schedule">Lunes · 08:00 hs</p>
+                <div id="aulas-main-view">
+                    <h1 class="view-title">MIS AULAS</h1>
+                    <p class="view-subtitle">Seleccioná un aula para ver asistencias, calificaciones y registros</p>
+                    <div class="card-panel aulas-container">
+                        <div class="aula-item" onclick="openClassroom('2°2 – Biología', 29)">
+                            <div>
+                                <h3>2°2 – Biologia</h3>
+                                <p class="schedule">Lunes · 08:00 hs</p>
+                            </div>
+                            <span class="badge-blue">29 alumnos</span>
                         </div>
-                        <span class="badge-blue">29 alumnos</span>
+                        <div class="aula-item" onclick="openClassroom('3°4 – Química', 27)">
+                            <div>
+                                <h3>3°4 – Química</h3>
+                                <p class="schedule">Lunes, Miercoles · 10:00 hs</p>
+                            </div>
+                            <span class="badge-blue">27 alumnos</span>
+                        </div>
+                        <div class="aula-item" onclick="openClassroom('2°4 – Biología', 30)">
+                            <div>
+                                <h3>2°4 – Biologia</h3>
+                                <p class="schedule">Viernes · 07:30 hs</p>
+                            </div>
+                            <span class="badge-blue">30 alumnos</span>
+                        </div>
+                        <div class="aula-item" onclick="openClassroom('2°3 – Química', 27)">
+                            <div>
+                                <h3>2°3 – Quimica</h3>
+                                <p class="schedule">Miercoles · 08:00 hs</p>
+                            </div>
+                            <span class="badge-blue">27 alumnos</span>
+                        </div>
                     </div>
-                    <div class="aula-item">
-                        <div>
-                            <h3>3°4 – Química</h3>
-                            <p class="schedule">Lunes, Miercoles · 10:00 hs</p>
-                        </div>
-                        <span class="badge-blue">27 alumnos</span>
+                </div>
+
+                <!-- VISTA INTERIOR DE UN AULA SELECCIONADA -->
+                <div id="aulas-detail-view" class="hidden classroom-detail-container">
+                    <button class="btn-back-home" onclick="closeClassroom()">
+                        <i class="fa-solid fa-arrow-left"></i> Volver a Mis Aulas
+                    </button>
+                    <h1 class="view-title" id="detail-classroom-title">Aula</h1>
+                    <p class="view-subtitle" id="detail-classroom-subtitle">Gestión del curso</p>
+
+                    <div class="classroom-tabs">
+                        <button class="tab-btn active" id="btn-tab-asistencia" onclick="switchClassTab('asistencia')">
+                            <i class="fa-solid fa-user-check"></i> Asistencias
+                        </button>
+                        <button class="tab-btn" id="btn-tab-calificaciones" onclick="switchClassTab('calificaciones')">
+                            <i class="fa-solid fa-star"></i> Calificaciones
+                        </button>
+                        <button class="tab-btn" id="btn-tab-registros" onclick="switchClassTab('registros')">
+                            <i class="fa-solid fa-note-sticky"></i> Registros
+                        </button>
                     </div>
-                    <div class="aula-item">
-                        <div>
-                            <h3>2°4 – Biologia</h3>
-                            <p class="schedule">Viernes · 07:30 hs</p>
-                        </div>
-                        <span class="badge-blue">30 alumnos</span>
-                    </div>
-                    <div class="aula-item">
-                        <div>
-                            <h3>2°3 – Quimica</h3>
-                            <p class="schedule">Miercoles · 08:00 hs</p>
-                        </div>
-                        <span class="badge-blue">27 alumnos</span>
+
+                    <div class="card-panel">
+                        <div id="tab-content-asistencia" class="student-list"></div>
+                        <div id="tab-content-calificaciones" class="student-list hidden"></div>
+                        <div id="tab-content-registros" class="student-list hidden"></div>
                     </div>
                 </div>
             </section>
 
-            <!-- PANTALLA: COMUNICACIÓN / CHAT -->
+            <!-- PANTALLA: COMUNICACIÓN / CHAT INTERACTIVO -->
             <section id="view-comunicacion" class="content-view hidden">
                 <h1 class="view-title">COMUNICACIÓN</h1>
                 <div class="card-panel chat-container">
                     <div class="chat-sidebar">
                         <div class="search-box">
                             <i class="fa-solid fa-magnifying-glass"></i>
-                            <input type="text" placeholder="Buscar contacto...">
+                            <input type="text" id="chat-search" placeholder="Buscar contacto...">
                         </div>
-                        <ul class="contact-list">
-                            <li class="contact-item active">
-                                <strong>Dra. Policastro</strong>
-                                <span>👍</span>
-                            </li>
-                            <li class="contact-item"><strong>Secretaria - Norma</strong></li>
-                            <li class="contact-item"><strong>Auxiliar - Marta</strong></li>
-                            <li class="contact-item"><strong>Profe. Valeria</strong></li>
-                        </ul>
+                        <ul class="contact-list" id="contact-list"></ul>
                     </div>
                     <div class="chat-main">
-                        <div class="chat-messages" id="chat-messages">
-                            <div class="chat-bubble left">Hola Clau, no te olvides de que el jueves no hay clases</div>
-                            <div class="chat-bubble right">Hola dire. Si. Ya vi que lo subieron a Notificaciones</div>
-                            <div class="chat-bubble left emoji-only">👍</div>
-                        </div>
+                        <div class="chat-header-info" id="active-chat-name">Selecciona un chat</div>
+                        <div class="chat-messages" id="chat-messages"></div>
                         <form id="chat-form" class="chat-input-area">
                             <input type="text" id="chat-input" placeholder="Escribir un mensaje..." required>
                             <button type="submit" class="btn-send">Enviar</button>
@@ -1065,7 +1185,6 @@
 
             <!-- PANTALLA: MI PERFIL -->
             <section id="view-perfil" class="content-view hidden">
-                <!-- BOTÓN DE REGRESO EN LA ESQUINA IZQUIERDA -->
                 <button class="btn-back-home" onclick="navigateTo('view-dashboard')">
                     <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
                 </button>
@@ -1185,6 +1304,132 @@
     </div>
 
     <script>
+        // LISTADO DE NOMBRES DE EJEMPLO PARA GENERAR ALUMNOS
+        const sampleFirstNames = ["Lucas", "Martina", "Joaquín", "Sofía", "Mateo", "Valentina", "Santiago", "Camila", "Benjamín", "Lucía", "Thiago", "Catalina", "Agustín", "Florencia", "Nicolás", "Mía", "Dante", "Victoria", "Ignacio", "Julieta", "Franco", "Abigail", "Tomás", "Renata", "Gonzalo", "Martina", "Alejo", "Zoe", "Emiliano", "Clara"];
+        const sampleLastNames = ["Pastorini", "Gómez", "Rodríguez", "López", "Martínez", "Pérez", "González", "Sánchez", "Ramírez", "Torres", "Flores", "Díaz", "Acosta", "Medina", "Herrera", "Castro", "Ortiz", "Rubio", "Silva", "Mendoza", "Juárez", "Rojas", "Fernández", "Giménez", "Ruiz", "Alvarez", "Castillo", "Romero", "Benítez", "Sosa"];
+
+        // FUNCIONES PARA ABRIR Y GESTIONAR AULAS
+        function openClassroom(className, count) {
+            document.getElementById('aulas-main-view').classList.add('hidden');
+            document.getElementById('aulas-detail-view').classList.remove('hidden');
+            document.getElementById('detail-classroom-title').textContent = className;
+            document.getElementById('detail-classroom-subtitle').textContent = `Nómina total: ${count} estudiantes`;
+
+            generateClassroomLists(count);
+            switchClassTab('asistencia');
+        }
+
+        function closeClassroom() {
+            document.getElementById('aulas-detail-view').classList.add('hidden');
+            document.getElementById('aulas-main-view').classList.remove('hidden');
+        }
+
+        function generateClassroomLists(count) {
+            const asistenciaContainer = document.getElementById('tab-content-asistencia');
+            const calificacionesContainer = document.getElementById('tab-content-calificaciones');
+            const registrosContainer = document.getElementById('tab-content-registros');
+
+            asistenciaContainer.innerHTML = '';
+            calificacionesContainer.innerHTML = '';
+            registrosContainer.innerHTML = '';
+
+            const sampleRecords = [
+                "Muy buen desempeño y participación en clase.",
+                "Presenta algunas distracciones pero cumple con las tareas.",
+                "Excelente nivel académico, constante y aplicada.",
+                "Requiere refuerzo en los conceptos prácticos.",
+                "Muy buena predisposición para el trabajo en grupo."
+            ];
+
+            for (let i = 1; i <= count; i++) {
+                const name = `${sampleFirstNames[(i - 1) % sampleFirstNames.length]} ${sampleLastNames[(i * 3) % sampleLastNames.length]} (${i})`;
+
+                // Asistencia
+                const rowAsist = document.createElement('div');
+                rowAsist.className = 'student-row';
+                rowAsist.innerHTML = `
+                    <span class="student-name">${i}. ${name}</span>
+                    <div class="student-action">
+                        <select>
+                            <option value="Presente">Presente</option>
+                            <option value="Ausente">Ausente</option>
+                            <option value="Tardanza">Tardanza</option>
+                        </select>
+                    </div>
+                `;
+                asistenciaContainer.appendChild(rowAsist);
+
+                // Calificaciones
+                const rowCalif = document.createElement('div');
+                rowCalif.className = 'student-row';
+                rowCalif.innerHTML = `
+                    <span class="student-name">${i}. ${name}</span>
+                    <div class="student-action">
+                        <input type="number" min="1" max="10" value="${Math.floor(Math.random() * 3) + 7}" style="width: 70px; text-align: center;">
+                    </div>
+                `;
+                calificacionesContainer.appendChild(rowCalif);
+
+                // Registros
+                const rowReg = document.createElement('div');
+                rowReg.className = 'student-row';
+                const randomMsg = sampleRecords[(i + 2) % sampleRecords.length];
+                rowReg.innerHTML = `
+                    <span class="student-name">${i}. ${name}</span>
+                    <span class="student-record">${randomMsg}</span>
+                `;
+                registrosContainer.appendChild(rowReg);
+            }
+        }
+
+        function switchClassTab(tabName) {
+            document.getElementById('btn-tab-asistencia').classList.remove('active');
+            document.getElementById('btn-tab-calificaciones').classList.remove('active');
+            document.getElementById('btn-tab-registros').classList.remove('active');
+
+            document.getElementById('tab-content-asistencia').classList.add('hidden');
+            document.getElementById('tab-content-calificaciones').classList.add('hidden');
+            document.getElementById('tab-content-registros').classList.add('hidden');
+
+            document.getElementById(`btn-tab-${tabName}`).classList.add('active');
+            document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
+        }
+
+        // BASE DE DATOS DE CHATS INTERACTIVOS
+        let chatData = {
+            "policastro": {
+                name: "Dra. Policastro",
+                messages: [
+                    { sender: "left", text: "Hola Clau, no te olvides de que el jueves no hay clases" },
+                    { sender: "right", text: "Hola dire. Si. Ya vi que lo subieron a Notificaciones" },
+                    { sender: "left", text: "👍" }
+                ]
+            },
+            "norma": {
+                name: "Secretaria - Norma",
+                messages: [
+                    { sender: "left", text: "Profe, recuerde entregar las planillas de asistencia firmadas." },
+                    { sender: "right", text: "Hola Norma, se las dejo mañana a primera hora." }
+                ]
+            },
+            "marta": {
+                name: "Auxiliar - Marta",
+                messages: [
+                    { sender: "left", text: "Hola profe, le dejé tiza y borrador nuevo en el Aula 2°2." },
+                    { sender: "right", text: "¡Muchas gracias Marta!" }
+                ]
+            },
+            "valeria": {
+                name: "Profe. Valeria",
+                messages: [
+                    { sender: "left", text: "Hola Clau! ¿Nos ponemos de acuerdo con el trabajo práctico unificado?" },
+                    { sender: "right", text: "¡Hola Vale! Sisi, hablemos después del mediodía." }
+                ]
+            }
+        };
+
+        let currentActiveChat = "policastro";
+
         let currentMonth = 0;
         const currentYear = 2026;
 
@@ -1209,23 +1454,21 @@
                 document.getElementById('main-app').classList.remove('hidden');
                 navigateTo('view-dashboard');
                 renderCalendar();
+                renderContacts();
+                loadChat(currentActiveChat);
             });
 
             const chatForm = document.getElementById('chat-form');
             const chatInput = document.getElementById('chat-input');
-            const chatMessages = document.getElementById('chat-messages');
 
             if (chatForm) {
                 chatForm.addEventListener('submit', (e) => {
                     e.preventDefault();
                     const text = chatInput.value.trim();
-                    if (text !== '') {
-                        const bubble = document.createElement('div');
-                        bubble.className = 'chat-bubble right';
-                        bubble.textContent = text;
-                        chatMessages.appendChild(bubble);
+                    if (text !== '' && currentActiveChat) {
+                        chatData[currentActiveChat].messages.push({ sender: 'right', text: text });
                         chatInput.value = '';
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        loadChat(currentActiveChat);
                     }
                 });
             }
@@ -1253,11 +1496,44 @@
             });
         });
 
-        // NAVEGACIÓN Y TRANSICIÓN DE DESVANECIDO (FADE IN/OUT)
+        function renderContacts() {
+            const contactList = document.getElementById('contact-list');
+            contactList.innerHTML = '';
+
+            for (let key in chatData) {
+                const li = document.createElement('li');
+                li.className = `contact-item ${key === currentActiveChat ? 'active' : ''}`;
+                li.innerHTML = `<strong>${chatData[key].name}</strong>`;
+                li.onclick = () => {
+                    currentActiveChat = key;
+                    renderContacts();
+                    loadChat(key);
+                };
+                contactList.appendChild(li);
+            }
+        }
+
+        function loadChat(chatKey) {
+            currentActiveChat = chatKey;
+            const chatHeader = document.getElementById('active-chat-name');
+            const chatMessages = document.getElementById('chat-messages');
+
+            chatHeader.textContent = chatData[chatKey].name;
+            chatMessages.innerHTML = '';
+
+            chatData[chatKey].messages.forEach(msg => {
+                const bubble = document.createElement('div');
+                bubble.className = `chat-bubble ${msg.sender}`;
+                bubble.textContent = msg.text;
+                chatMessages.appendChild(bubble);
+            });
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
         function navigateTo(viewId) {
             const views = document.querySelectorAll('.content-view');
             
-            // Reiniciar animación en la pantalla destino
             views.forEach(v => {
                 v.classList.add('hidden');
                 v.style.animation = 'none';
@@ -1266,12 +1542,10 @@
             const activeView = document.getElementById(viewId);
             if (activeView) {
                 activeView.classList.remove('hidden');
-                // Forzar reflujo para reiniciar la animación CSS
                 void activeView.offsetWidth; 
                 activeView.style.animation = 'fadeIn 0.4s ease-in-out forwards';
             }
 
-            // ACTUALIZAR ESTADO ACTIVO EN LOS BOTONES DEL SIDEBAR
             const navButtons = document.querySelectorAll('.nav-btn');
             navButtons.forEach(btn => {
                 if (btn.getAttribute('data-target') === viewId) {
@@ -1284,7 +1558,6 @@
             const sidebar = document.getElementById('sidebar');
             const floatingBtn = document.getElementById('floating-menu-toggle');
 
-            // OCULTAR BARRA LATERAL EN INICIO Y EN MI PERFIL
             if (viewId === 'view-dashboard' || viewId === 'view-perfil') {
                 sidebar.classList.add('hidden');
                 floatingBtn.classList.add('hidden');
