@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Highland School - EduApp</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-cream: #fdfaf3;
+            --navy-dark: #0f2347;
+            --blue-header: #1a365d;
+            --blue-card: #4a77d4;
+            --blue-sidebar: #4679d6;
+            --blue-badge: #528ae8;
+            --text-dark: #2c3e50;
+            --text-muted: #6c757d;
+            --border-light: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .hidden { display: none !important; }
+
+        /* ANIMACIÓN DE DESVANECIDO PARA CAMBIO DE SECCIÓN */
+        .content-view {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* LOGIN SCREEN */
+        #view-login {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff;
+            position: relative;
+        }
+
+        .login-container {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .academic-title {
+            font-family: 'Georgia', serif;
+            color: var(--navy-dark);
+            font-size: 2.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 2.5rem;
+            line-height: 1.1;
+        }
+
+        .input-group {
+            background: #f0f0f0;
+            border: 1px solid #b0b0b0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .input-group label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-right: 8px;
+            white-space: nowrap;
+        }
+
+        .input-group input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--navy-dark);
+            color: #fff;
+            border: none;
+            padding: 10px 40px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        .brand-logo {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0b2545;
+        }
+
+        .brand-logo span { color: #0099ff; }
+
+        /* MAIN LAYOUT */
+        .app-layout {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 80px;
+            background: var(--blue-sidebar);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 15px;
+            position: relative;
+            z-index: 10;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .sidebar.collapsed {
+            margin-left: -80px;
+        }
+
+        .menu-toggle {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .floating-toggle {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--blue-sidebar);
+            color: #fff;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 1.4rem;
+            cursor: pointer;
+            z-index: 5;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .nav-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: #fff;
+            border: none;
+            color: var(--blue-sidebar);
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-btn:hover { 
+            transform: scale(1.08); 
+        }
+
+        .nav-btn.active {
+            background: var(--navy-dark);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(15, 35, 71, 0.6);
+            transform: scale(1.05);
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px 60px;
+            background: var(--bg-cream);
+        }
+
+        /* HEADERS */
+        .view-title {
+            font-family: 'Georgia', serif;
+            font-size: 2.5rem;
+            color: #000;
+            margin-bottom: 5px;
+        }
+
+        .view-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        /* DASHBOARD */
+        .top-header {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .btn-profile-badge {
+            background: var(--blue-card);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1.15rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .btn-profile-badge:hover {
+            transform: translateY(-2px);
+            background: var(--blue-sidebar);
+        }
+
+        /* BOTÓN DE VOLVER GENERAL */
+        .btn-back-home {
+            background: var(--navy-dark);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+
+        .btn-back-home:hover {
+            transform: translateX(-3px);
+        }
+
+        .dashboard-hero {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .school-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .crest-icon {
+            font-size: 4rem;
+            color: #1a4da6;
+        }
+
+        .school-brand h2 {
+            font-family: 'Georgia', serif;
+            font-size: 3.5rem;
+            color: #000;
+        }
+
+        .subtitle {
+            font-family: 'Georgia', serif;
+            font-size: 1.4rem;
+            margin-top: 5px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 260px);
+            gap: 25px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .dash-card {
+            background: var(--blue-card);
+            color: #fff;
+            border-radius: 20px;
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+
+        .dash-card:hover { transform: translateY(-3px); }
+
+        .card-icon { font-size: 2.8rem; }
+
+        .dash-card span {
+            font-family: 'Georgia', serif;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        /* PANELS & CARDS */
+        .card-panel {
+            background: #fff;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+
+        /* AULAS */
+        .aulas-container {
+            max-width: 650px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .aula-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .aula-item:hover {
+            background: #f8fafc;
+            transform: translateX(3px);
+            border-color: var(--blue-card);
+        }
+
+        .aula-item h3 { font-size: 1.1rem; }
+        .schedule { color: var(--text-muted); font-size: 0.85rem; }
+
+        .badge-blue {
+            background: var(--blue-badge);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* DETALLE DE AULA Y PESTAÑAS */
+        .classroom-detail-container {
+            max-width: 800px;
+        }
+
+        .classroom-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn.active {
+            background: var(--navy-dark);
+            color: #fff;
+        }
+
+        .student-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .student-row {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .student-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--navy-dark);
+        }
+
+        .student-action select, .student-action input {
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+            font-size: 0.9rem;
+            background: #fdfdfd;
+        }
+
+        .student-record {
+            font-size: 0.88rem;
+            color: #555;
+            background: #f1f5f9;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        /* CHAT */
+        .chat-container {
+            display: flex;
+            height: 500px;
+            padding: 0;
+            overflow: hidden;
+            max-width: 900px;
+        }
+
+        .chat-sidebar {
+            width: 250px;
+            border-right: 1px solid var(--border-light);
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 6px 10px;
+            gap: 8px;
+        }
+
+        .search-box input { border: none; outline: none; width: 100%; font-size: 0.85rem; }
+
+        .contact-list { list-style: none; margin-top: 15px; }
+
+        .contact-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .contact-item:hover { background: #f8fafc; }
+        .contact-item.active { background: #f0f4fd; border-left: 4px solid var(--blue-sidebar); font-weight: bold; }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            background: #fff;
+        }
+
+        .chat-header-info {
+            font-weight: bold;
+            font-size: 1rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--navy-dark);
+            margin-bottom: 15px;
+        }
+
+        .chat-messages { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            overflow-y: auto; 
+            flex: 1;
+            padding-right: 5px;
+        }
+
+        .chat-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            word-wrap: break-word;
+        }
+
+        .chat-bubble.left {
+            background: #aed0f3;
+            align-self: flex-start;
+            color: #0b2545;
+        }
+
+        .chat-bubble.right {
+            background: #99c2ec;
+            align-self: flex-end;
+            color: #0b2545;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            outline: none;
+        }
+
+        .btn-send {
+            background: var(--blue-header);
+            color: #fff;
+            border: none;
+            padding: 0 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-send:hover { background: var(--navy-dark); }
+
+        /* NOTIFICACIONES */
+        .notifications-list { max-width: 700px; }
+
+        .section-label {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin: 15px 0 10px 0;
+            display: block;
+        }
+
+        .notification-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            gap: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+        }
+
+        .notif-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .notif-icon.red { background: #c0392b; }
+        .notif-icon.green { background: #27ae60; }
+        .notif-icon.yellow { background: #f39c12; }
+        .notif-icon.blue { background: #2980b9; }
+
+        .notif-content h4 { font-size: 1rem; margin-bottom: 4px; }
+        .notif-content p { font-size: 0.85rem; color: #555; margin-bottom: 8px; }
+
+        .notif-tag {
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .notif-tag.red { background: #fadbd8; color: #78281f; }
+        .notif-tag.green { background: #d4efdf; color: #145a32; }
+        .notif-tag.yellow { background: #fcf3cf; color: #7d6608; }
+        .notif-tag.blue { background: #d6eaf8; color: #1b4f72; }
+
+        /* CALENDARIO DINÁMICO */
+        .calendar-card {
+            background: var(--blue-card);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 850px;
+            color: #fff;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .calendar-header h2 { font-family: 'Georgia', serif; letter-spacing: 2px; }
+
+        .cal-nav {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .cal-nav:hover { background: rgba(255,255,255,0.5); }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: #fff;
+            color: #000;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .day-head {
+            background: #eef4ff;
+            text-align: center;
+            font-weight: bold;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            font-size: 0.85rem;
+            color: var(--blue-header);
+        }
+
+        .day {
+            min-height: 75px;
+            border-right: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            padding: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: background 0.2s;
+        }
+
+        .day:hover { background: #f8fafc; }
+        .day.muted { color: #ccc; background: #fafafa; cursor: default; }
+
+        .event-badge {
+            font-size: 0.68rem;
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: normal;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .event-eval { background-color: #e74c3c; }
+        .event-jornada { background-color: #8e44ad; }
+        .event-notas { background-color: #27ae60; }
+        .event-general { background-color: #2980b9; }
+
+        .monthly-events-card {
+            max-width: 850px;
+            margin-top: 20px;
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .monthly-events-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--navy-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .event-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+
+        .event-item-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .event-date-chip {
+            background: var(--blue-header);
+            color: #fff;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        .btn-delete-event {
+            background: #e74c3c;
+            color: #fff;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+
+        .btn-delete-event:hover {
+            background: #c0392b;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .modal-body {
+            background: #fff;
+            border-radius: 16px;
+            padding: 25px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-body h3 {
+            margin-bottom: 15px;
+            color: var(--navy-dark);
+        }
+
+        .modal-field {
+            margin-bottom: 15px;
+        }
+
+        .modal-field label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--text-dark);
+        }
+
+        .modal-field input, .modal-field select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .existing-events-list {
+            margin-bottom: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 10px;
+            background: #fdfdfd;
+        }
+
+        .existing-event-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.88rem;
+        }
+
+        .existing-event-item:last-child {
+            border-bottom: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            background: #e0e0e0;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* PERFIL */
+        .profile-header-card {
+            background: var(--navy-dark);
+            color: #fff;
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            max-width: 750px;
+            margin-bottom: 20px;
+        }
+
+        .avatar-circle {
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            background: #fff;
+            color: var(--navy-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-family: 'Georgia', serif;
+            font-weight: bold;
+        }
+
+        .profile-header-info h2 { font-family: 'Georgia', serif; font-size: 1.5rem; }
+        .role-highlight { color: #f39c12; font-size: 0.9rem; font-weight: 600; margin: 3px 0; }
+        .subtext { font-size: 0.8rem; opacity: 0.8; }
+
+        .profile-section { max-width: 750px; }
+        .profile-section h3 { font-size: 1.1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .yellow-icon { color: #f39c12; }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .field-box label { display: block; font-size: 0.75rem; font-weight: bold; color: var(--text-muted); margin-bottom: 4px; }
+        .field-box input { width: 100%; padding: 10px; background: #e9ecef; border: 1px solid #ccc; border-radius: 8px; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-number { display: block; font-size: 2.2rem; font-family: 'Georgia', serif; font-weight: bold; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: bold; }
+
+        .section-sub { font-size: 0.75rem; font-weight: bold; color: var(--text-muted); margin-bottom: 10px; }
+        .tags-container { display: flex; gap: 10px; flex-wrap: wrap; }
+        .tag-pill { background: #dbe7f9; color: var(--blue-header); padding: 6px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600; }
+
+        .security-box { display: flex; justify-content: space-between; align-items: center; }
+        .security-title { font-weight: bold; margin-top: 5px; }
+        .btn-outline { background: #fff; border: 1px solid #ccc; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        .logout-wrapper { max-width: 750px; text-align: center; margin-top: 25px; margin-bottom: 30px; }
+        .btn-logout { background: #fff; border: 1px solid #c0392b; color: #c0392b; padding: 10px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <!-- VISTA: LOGIN -->
+    <div id="view-login" class="screen active">
+        <div class="login-container">
+            <h1 class="academic-title">CONTROL<br>ACADEMICO</h1>
+            <form id="login-form">
+                <div class="input-group">
+                    <label>Usuario:</label>
+                    <input type="text" id="username" value="ProfeVillanueva" required>
+                </div>
+                <div class="input-group">
+                    <label>Contraseña:</label>
+                    <input type="password" id="password" value="********" required>
+                </div>
+                <button type="submit" class="btn-primary">Ingresar</button>
+            </form>
+            <div class="brand-logo">Edu<span>App</span></div>
+        </div>
+    </div>
+
+    <!-- VISTA COMPARTIDA: MAIN APP LAYOUT -->
+    <div id="main-app" class="app-layout hidden">
+        
+        <!-- BOTÓN DE MENÚ FLOTANTE -->
+        <button id="floating-menu-toggle" class="floating-toggle hidden" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar" id="sidebar">
+            <button class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+            <div class="sidebar-nav">
+                <button class="nav-btn" data-target="view-notificaciones" title="Notificaciones"><i class="fa-solid fa-file-lines"></i></button>
+                <button class="nav-btn" data-target="view-aulas" title="Mis Aulas"><i class="fa-solid fa-chalkboard-user"></i></button>
+                <button class="nav-btn" data-target="view-dashboard" title="Inicio"><i class="fa-solid fa-house"></i></button>
+                <button class="nav-btn" data-target="view-calendario" title="Calendario"><i class="fa-solid fa-calendar-days"></i></button>
+                <button class="nav-btn" data-target="view-comunicacion" title="Mensajes"><i class="fa-solid fa-comments"></i></button>
+            </div>
+        </aside>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="content-area">
+
+            <!-- PANTALLA: DASHBOARD / INICIO -->
+            <section id="view-dashboard" class="content-view active">
+                <div class="top-header">
+                    <button class="btn-profile-badge" onclick="navigateTo('view-perfil')">
+                        <i class="fa-solid fa-user"></i> Mi Perfil
+                    </button>
+                </div>
+                <div class="dashboard-hero">
+                    <div class="school-brand">
+                        <div class="crest-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                        <h2>Highland School</h2>
+                    </div>
+                    <p class="subtitle">Bienvenido a tu portal de docencia</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dash-card" onclick="navigateTo('view-calendario')">
+                        <i class="fa-solid fa-calendar-days card-icon"></i>
+                        <span>CALENDARIO</span>
+                    </div>
+                    <div class="dash-card" onclick="navigateTo('view-aulas')">
+                        <i class="fa-solid fa-chalkboard-user card-icon"></i>
+                        <span>MIS AULAS</span>
+                    </div>
+                    <div class="dash-card" onclick="navigateTo('view-notificaciones')">
+                        <i class="fa-solid fa-file-lines card-icon"></i>
+                        <span>NOTIFICACIONES</span>
+                    </div>
+                    <div class="dash-card" onclick="navigateTo('view-comunicacion')">
+                        <i class="fa-solid fa-comments card-icon"></i>
+                        <span>COMUNICACION</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANTALLA: MIS AULAS -->
+            <section id="view-aulas" class="content-view hidden">
+                <div id="aulas-main-view">
+                    <h1 class="view-title">MIS AULAS</h1>
+                    <p class="view-subtitle">Seleccioná un aula para ver asistencias, calificaciones y registros</p>
+                    <div class="card-panel aulas-container">
+                        <div class="aula-item" onclick="openClassroom('2°2 – Biología', 29)">
+                            <div>
+                                <h3>2°2 – Biologia</h3>
+                                <p class="schedule">Lunes · 08:00 hs</p>
+                            </div>
+                            <span class="badge-blue">29 alumnos</span>
+                        </div>
+                        <div class="aula-item" onclick="openClassroom('3°4 – Química', 27)">
+                            <div>
+                                <h3>3°4 – Química</h3>
+                                <p class="schedule">Lunes, Miercoles · 10:00 hs</p>
+                            </div>
+                            <span class="badge-blue">27 alumnos</span>
+                        </div>
+                        <div class="aula-item" onclick="openClassroom('2°4 – Biología', 30)">
+                            <div>
+                                <h3>2°4 – Biologia</h3>
+                                <p class="schedule">Viernes · 07:30 hs</p>
+                            </div>
+                            <span class="badge-blue">30 alumnos</span>
+                        </div>
+                        <div class="aula-item" onclick="openClassroom('2°3 – Química', 27)">
+                            <div>
+                                <h3>2°3 – Quimica</h3>
+                                <p class="schedule">Miercoles · 08:00 hs</p>
+                            </div>
+                            <span class="badge-blue">27 alumnos</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VISTA INTERIOR DE UN AULA SELECCIONADA -->
+                <div id="aulas-detail-view" class="hidden classroom-detail-container">
+                    <button class="btn-back-home" onclick="closeClassroom()">
+                        <i class="fa-solid fa-arrow-left"></i> Volver a Mis Aulas
+                    </button>
+                    <h1 class="view-title" id="detail-classroom-title">Aula</h1>
+                    <p class="view-subtitle" id="detail-classroom-subtitle">Gestión del curso</p>
+
+                    <div class="classroom-tabs">
+                        <button class="tab-btn active" id="btn-tab-asistencia" onclick="switchClassTab('asistencia')">
+                            <i class="fa-solid fa-user-check"></i> Asistencias
+                        </button>
+                        <button class="tab-btn" id="btn-tab-calificaciones" onclick="switchClassTab('calificaciones')">
+                            <i class="fa-solid fa-star"></i> Calificaciones
+                        </button>
+                        <button class="tab-btn" id="btn-tab-registros" onclick="switchClassTab('registros')">
+                            <i class="fa-solid fa-note-sticky"></i> Registros
+                        </button>
+                    </div>
+
+                    <div class="card-panel">
+                        <div id="tab-content-asistencia" class="student-list"></div>
+                        <div id="tab-content-calificaciones" class="student-list hidden"></div>
+                        <div id="tab-content-registros" class="student-list hidden"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANTALLA: COMUNICACIÓN / CHAT INTERACTIVO -->
+            <section id="view-comunicacion" class="content-view hidden">
+                <h1 class="view-title">COMUNICACIÓN</h1>
+                <div class="card-panel chat-container">
+                    <div class="chat-sidebar">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="chat-search" placeholder="Buscar contacto...">
+                        </div>
+                        <ul class="contact-list" id="contact-list"></ul>
+                    </div>
+                    <div class="chat-main">
+                        <div class="chat-header-info" id="active-chat-name">Selecciona un chat</div>
+                        <div class="chat-messages" id="chat-messages"></div>
+                        <form id="chat-form" class="chat-input-area">
+                            <input type="text" id="chat-input" placeholder="Escribir un mensaje..." required>
+                            <button type="submit" class="btn-send">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANTALLA: NOTIFICACIONES -->
+            <section id="view-notificaciones" class="content-view hidden">
+                <h1 class="view-title">NOTIFICACIONES</h1>
+                <p class="view-subtitle">Avisos institucionales, académicos y recordatorios</p>
+                
+                <div class="notifications-list">
+                    <span class="section-label">HOY</span>
+                    
+                    <div class="notification-item">
+                        <div class="notif-icon red"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                        <div class="notif-content">
+                            <h4>Reunion de padres reprogramada</h4>
+                            <p>La reunión de 3°A se pasó de las 17:00 a las 18:30 por superposición con un acto escolar.</p>
+                            <span class="notif-tag red">URGENTE</span>
+                        </div>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notif-icon green"><i class="fa-solid fa-file-lines"></i></div>
+                        <div class="notif-content">
+                            <h4>Notas pendientes de carga</h4>
+                            <p>Te faltan cargar las notas de la 2° Evaluación de 4°C Matemática. Cierre el viernes.</p>
+                            <span class="notif-tag green">ACADEMICO</span>
+                        </div>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notif-icon yellow"><i class="fa-solid fa-clock"></i></div>
+                        <div class="notif-content">
+                            <h4>Recordatorio de horario</h4>
+                            <p>Hoy tenés clase con 5°B Física a las 10:15 en el Aula 4.</p>
+                            <span class="notif-tag yellow">RECORDATORIO</span>
+                        </div>
+                    </div>
+
+                    <span class="section-label">AYER</span>
+
+                    <div class="notification-item">
+                        <div class="notif-icon blue"><i class="fa-solid fa-house"></i></div>
+                        <div class="notif-content">
+                            <h4>Nueva circular institucional</h4>
+                            <p>Dirección publicó el protocolo actualizado para salidas educativas del segundo semestre.</p>
+                            <span class="notif-tag blue">INSTITUCIONAL</span>
+                        </div>
+                    </div>
+
+                    <div class="notification-item">
+                        <div class="notif-icon yellow"><i class="fa-solid fa-clock"></i></div>
+                        <div class="notif-content">
+                            <h4>Vencimiento de justificativo</h4>
+                            <p>Bruno Ledesma (3°A) tiene un justificativo médico por vencer sin validar en secretaría.</p>
+                            <span class="notif-tag yellow">RECORDATORIO</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PANTALLA: CALENDARIO -->
+            <section id="view-calendario" class="content-view hidden">
+                <h1 class="view-title">CALENDARIO ESCOLAR</h1>
+                <p class="view-subtitle">Hacé clic en cualquier día para agendar o borrar eventos</p>
+                
+                <div class="calendar-card">
+                    <div class="calendar-header">
+                        <button class="cal-nav" id="btn-prev-month">&lt;</button>
+                        <h2 id="month-year-label">ENERO 2026</h2>
+                        <button class="cal-nav" id="btn-next-month">&gt;</button>
+                    </div>
+                    <div class="calendar-grid" id="calendar-grid"></div>
+                </div>
+
+                <div class="monthly-events-card">
+                    <h3><i class="fa-solid fa-list-check yellow-icon"></i> Eventos del Mes</h3>
+                    <div id="monthly-events-list"></div>
+                </div>
+            </section>
+
+            <!-- PANTALLA: MI PERFIL -->
+            <section id="view-perfil" class="content-view hidden">
+                <button class="btn-back-home" onclick="navigateTo('view-dashboard')">
+                    <i class="fa-solid fa-arrow-left"></i> Volver al Inicio
+                </button>
+
+                <h1 class="view-title">Mi Perfil</h1>
+                <p class="view-subtitle">Tus datos personales y académico</p>
+
+                <div class="profile-header-card">
+                    <div class="avatar-circle">CV</div>
+                    <div class="profile-header-info">
+                        <h2>Claudia Villanueva</h2>
+                        <p class="role-highlight">Docente – Química y Biología</p>
+                        <p class="subtext">Legajo N.º 0342 · En la institución desde 2019</p>
+                    </div>
+                </div>
+
+                <div class="card-panel profile-section">
+                    <h3><i class="fa-regular fa-user"></i> Datos personales</h3>
+                    <div class="form-grid">
+                        <div class="field-box">
+                            <label>NOMBRE COMPLETO</label>
+                            <input type="text" value="Claudia Villanueva" readonly>
+                        </div>
+                        <div class="field-box">
+                            <label>DNI</label>
+                            <input type="text" value="30.223.***" readonly>
+                        </div>
+                        <div class="field-box">
+                            <label>CORREO ELECTRONICO</label>
+                            <input type="email" value="cladiavillanueva156@gmail.com" readonly>
+                        </div>
+                        <div class="field-box">
+                            <label>TELEFONO DE CONTACTO</label>
+                            <input type="text" value="(011) 15-****-4521" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-panel profile-section">
+                    <h3><i class="fa-solid fa-file-alt yellow-icon"></i> Información académica</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-number">4</span>
+                            <span class="stat-label">CURSOS A CARGO</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">8</span>
+                            <span class="stat-label">HORAS CÁTEDRA</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-number">117</span>
+                            <span class="stat-label">TOTAL DE ALUMNOS</span>
+                        </div>
+                    </div>
+                    <p class="section-sub">MATERIAS QUE DICTA</p>
+                    <div class="tags-container">
+                        <span class="tag-pill">2°2 – BIOLOGIA</span>
+                        <span class="tag-pill">3°4 – QUÍMICA</span>
+                        <span class="tag-pill">2°4 – BIOLOGIA</span>
+                        <span class="tag-pill">2°3 – QUIMICA</span>
+                    </div>
+                </div>
+
+                <div class="card-panel profile-section security-box">
+                    <div>
+                        <h3><i class="fa-solid fa-lock yellow-icon"></i> Seguridad</h3>
+                        <p class="security-title">Contraseña</p>
+                        <p class="subtext">Última actualización hace 4 meses</p>
+                    </div>
+                    <button class="btn-outline">Cambiar</button>
+                </div>
+
+                <div class="logout-wrapper">
+                    <button class="btn-logout" onclick="logout()">Cerrar Sesión</button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL PARA AGREGAR / ELIMINAR EVENTOS -->
+    <div id="modal-event" class="modal-overlay hidden">
+        <div class="modal-body">
+            <h3>Gestionar Eventos de la Fecha</h3>
+            <div class="modal-field">
+                <label>Fecha seleccionada:</label>
+                <input type="text" id="event-date-display" readonly style="background: #eee;">
+            </div>
+
+            <div id="day-events-container" class="hidden">
+                <label style="font-size:0.85rem; font-weight:bold; color:var(--text-dark); margin-bottom:5px; display:block;">Eventos programados:</label>
+                <div class="existing-events-list" id="day-events-list"></div>
+            </div>
+
+            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
+
+            <label style="font-size:0.9rem; font-weight:bold; color:var(--navy-dark); margin-bottom:10px; display:block;">Agregar nuevo evento:</label>
+            
+            <div class="modal-field">
+                <label>Título del evento / actividad:</label>
+                <input type="text" id="event-title" placeholder="Ej: Evaluación 2°2 Biología">
+            </div>
+            <div class="modal-field">
+                <label>Tipo de evento:</label>
+                <select id="event-type">
+                    <option value="event-eval">Evaluación / Pruebas</option>
+                    <option value="event-jornada">Institucional / Jornada Directiva</option>
+                    <option value="event-notas">Entrega de Notas</option>
+                    <option value="event-general">Recordatorio General</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeEventModal()">Cancelar</button>
+                <button class="btn-primary" style="margin-top:0;" onclick="saveEvent()">Guardar Fecha</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // LISTADO DE NOMBRES DE EJEMPLO PARA GENERAR ALUMNOS
+        const sampleFirstNames = ["Lucas", "Martina", "Joaquín", "Sofía", "Mateo", "Valentina", "Santiago", "Camila", "Benjamín", "Lucía", "Thiago", "Catalina", "Agustín", "Florencia", "Nicolás", "Mía", "Dante", "Victoria", "Ignacio", "Julieta", "Franco", "Abigail", "Tomás", "Renata", "Gonzalo", "Martina", "Alejo", "Zoe", "Emiliano", "Clara"];
+        const sampleLastNames = ["Pastorini", "Gómez", "Rodríguez", "López", "Martínez", "Pérez", "González", "Sánchez", "Ramírez", "Torres", "Flores", "Díaz", "Acosta", "Medina", "Herrera", "Castro", "Ortiz", "Rubio", "Silva", "Mendoza", "Juárez", "Rojas", "Fernández", "Giménez", "Ruiz", "Alvarez", "Castillo", "Romero", "Benítez", "Sosa"];
+
+        // FUNCIONES PARA ABRIR Y GESTIONAR AULAS
+        function openClassroom(className, count) {
+            document.getElementById('aulas-main-view').classList.add('hidden');
+            document.getElementById('aulas-detail-view').classList.remove('hidden');
+            document.getElementById('detail-classroom-title').textContent = className;
+            document.getElementById('detail-classroom-subtitle').textContent = `Nómina total: ${count} estudiantes`;
+
+            generateClassroomLists(count);
+            switchClassTab('asistencia');
+        }
+
+        function closeClassroom() {
+            document.getElementById('aulas-detail-view').classList.add('hidden');
+            document.getElementById('aulas-main-view').classList.remove('hidden');
+        }
+
+        function generateClassroomLists(count) {
+            const asistenciaContainer = document.getElementById('tab-content-asistencia');
+            const calificacionesContainer = document.getElementById('tab-content-calificaciones');
+            const registrosContainer = document.getElementById('tab-content-registros');
+
+            asistenciaContainer.innerHTML = '';
+            calificacionesContainer.innerHTML = '';
+            registrosContainer.innerHTML = '';
+
+            const sampleRecords = [
+                "Muy buen desempeño y participación en clase.",
+                "Presenta algunas distracciones pero cumple con las tareas.",
+                "Excelente nivel académico, constante y aplicada.",
+                "Requiere refuerzo en los conceptos prácticos.",
+                "Muy buena predisposición para el trabajo en grupo."
+            ];
+
+            for (let i = 1; i <= count; i++) {
+                const name = `${sampleFirstNames[(i - 1) % sampleFirstNames.length]} ${sampleLastNames[(i * 3) % sampleLastNames.length]} (${i})`;
+
+                // Asistencia
+                const rowAsist = document.createElement('div');
+                rowAsist.className = 'student-row';
+                rowAsist.innerHTML = `
+                    <span class="student-name">${i}. ${name}</span>
+                    <div class="student-action">
+                        <select>
+                            <option value="Presente">Presente</option>
+                            <option value="Ausente">Ausente</option>
+                            <option value="Tardanza">Tardanza</option>
+                        </select>
+                    </div>
+                `;
+                asistenciaContainer.appendChild(rowAsist);
+
+                // Calificaciones
+                const rowCalif = document.createElement('div');
+                rowCalif.className = 'student-row';
+                rowCalif.innerHTML = `
+                    <span class="student-name">${i}. ${name}</span>
+                    <div class="student-action">
+                        <input type="number" min="1" max="10" value="${Math.floor(Math.random() * 3) + 7}" style="width: 70px; text-align: center;">
+                    </div>
+                `;
+                calificacionesContainer.appendChild(rowCalif);
+
+                // Registros
+                const rowReg = document.createElement('div');
+                rowReg.className = 'student-row';
+                const randomMsg = sampleRecords[(i + 2) % sampleRecords.length];
+                rowReg.innerHTML = `
+                    <span class="student-name">${i}. ${name}</span>
+                    <span class="student-record">${randomMsg}</span>
+                `;
+                registrosContainer.appendChild(rowReg);
+            }
+        }
+
+        function switchClassTab(tabName) {
+            document.getElementById('btn-tab-asistencia').classList.remove('active');
+            document.getElementById('btn-tab-calificaciones').classList.remove('active');
+            document.getElementById('btn-tab-registros').classList.remove('active');
+
+            document.getElementById('tab-content-asistencia').classList.add('hidden');
+            document.getElementById('tab-content-calificaciones').classList.add('hidden');
+            document.getElementById('tab-content-registros').classList.add('hidden');
+
+            document.getElementById(`btn-tab-${tabName}`).classList.add('active');
+            document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
+        }
+
+        // BASE DE DATOS DE CHATS INTERACTIVOS
+        let chatData = {
+            "policastro": {
+                name: "Dra. Policastro",
+                messages: [
+                    { sender: "left", text: "Hola Clau, no te olvides de que el jueves no hay clases" },
+                    { sender: "right", text: "Hola dire. Si. Ya vi que lo subieron a Notificaciones" },
+                    { sender: "left", text: "👍" }
+                ]
+            },
+            "norma": {
+                name: "Secretaria - Norma",
+                messages: [
+                    { sender: "left", text: "Profe, recuerde entregar las planillas de asistencia firmadas." },
+                    { sender: "right", text: "Hola Norma, se las dejo mañana a primera hora." }
+                ]
+            },
+            "marta": {
+                name: "Auxiliar - Marta",
+                messages: [
+                    { sender: "left", text: "Hola profe, le dejé tiza y borrador nuevo en el Aula 2°2." },
+                    { sender: "right", text: "¡Muchas gracias Marta!" }
+                ]
+            },
+            "valeria": {
+                name: "Profe. Valeria",
+                messages: [
+                    { sender: "left", text: "Hola Clau! ¿Nos ponemos de acuerdo con el trabajo práctico unificado?" },
+                    { sender: "right", text: "¡Hola Vale! Sisi, hablemos después del mediodía." }
+                ]
+            }
+        };
+
+        let currentActiveChat = "policastro";
+
+        let currentMonth = 0;
+        const currentYear = 2026;
+
+        const monthNames = [
+            "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
+            "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
+        ];
+
+        let schoolEvents = [
+            { id: 1, date: '2026-02-18', title: 'Jornada Docente Obligatoria', type: 'event-jornada', source: 'Directivos' },
+            { id: 2, date: '2026-02-25', title: 'Inicio de Clases 2026', type: 'event-general', source: 'Directivos' },
+            { id: 3, date: '2026-03-27', title: 'Evaluación Biología 2°2', type: 'event-eval', source: 'Docente' }
+        ];
+
+        let selectedDateStr = "";
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                document.getElementById('view-login').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                navigateTo('view-dashboard');
+                renderCalendar();
+                renderContacts();
+                loadChat(currentActiveChat);
+            });
+
+            const chatForm = document.getElementById('chat-form');
+            const chatInput = document.getElementById('chat-input');
+
+            if (chatForm) {
+                chatForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const text = chatInput.value.trim();
+                    if (text !== '' && currentActiveChat) {
+                        chatData[currentActiveChat].messages.push({ sender: 'right', text: text });
+                        chatInput.value = '';
+                        loadChat(currentActiveChat);
+                    }
+                });
+            }
+
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetId = btn.getAttribute('data-target');
+                    if (targetId) navigateTo(targetId);
+                });
+            });
+
+            document.getElementById('btn-prev-month').addEventListener('click', () => {
+                if (currentMonth > 0) {
+                    currentMonth--;
+                    renderCalendar();
+                }
+            });
+
+            document.getElementById('btn-next-month').addEventListener('click', () => {
+                if (currentMonth < 11) {
+                    currentMonth++;
+                    renderCalendar();
+                }
+            });
+        });
+
+        function renderContacts() {
+            const contactList = document.getElementById('contact-list');
+            contactList.innerHTML = '';
+
+            for (let key in chatData) {
+                const li = document.createElement('li');
+                li.className = `contact-item ${key === currentActiveChat ? 'active' : ''}`;
+                li.innerHTML = `<strong>${chatData[key].name}</strong>`;
+                li.onclick = () => {
+                    currentActiveChat = key;
+                    renderContacts();
+                    loadChat(key);
+                };
+                contactList.appendChild(li);
+            }
+        }
+
+        function loadChat(chatKey) {
+            currentActiveChat = chatKey;
+            const chatHeader = document.getElementById('active-chat-name');
+            const chatMessages = document.getElementById('chat-messages');
+
+            chatHeader.textContent = chatData[chatKey].name;
+            chatMessages.innerHTML = '';
+
+            chatData[chatKey].messages.forEach(msg => {
+                const bubble = document.createElement('div');
+                bubble.className = `chat-bubble ${msg.sender}`;
+                bubble.textContent = msg.text;
+                chatMessages.appendChild(bubble);
+            });
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function navigateTo(viewId) {
+            const views = document.querySelectorAll('.content-view');
+            
+            views.forEach(v => {
+                v.classList.add('hidden');
+                v.style.animation = 'none';
+            });
+
+            const activeView = document.getElementById(viewId);
+            if (activeView) {
+                activeView.classList.remove('hidden');
+                void activeView.offsetWidth; 
+                activeView.style.animation = 'fadeIn 0.4s ease-in-out forwards';
+            }
+
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => {
+                if (btn.getAttribute('data-target') === viewId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            const sidebar = document.getElementById('sidebar');
+            const floatingBtn = document.getElementById('floating-menu-toggle');
+
+            if (viewId === 'view-dashboard' || viewId === 'view-perfil') {
+                sidebar.classList.add('hidden');
+                floatingBtn.classList.add('hidden');
+            } else {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.remove('collapsed');
+                floatingBtn.classList.add('hidden');
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const floatingBtn = document.getElementById('floating-menu-toggle');
+
+            sidebar.classList.toggle('collapsed');
+
+            if (sidebar.classList.contains('collapsed')) {
+                setTimeout(() => {
+                    if (sidebar.classList.contains('collapsed')) {
+                        floatingBtn.classList.remove('hidden');
+                    }
+                }, 300);
+            } else {
+                floatingBtn.classList.add('hidden');
+            }
+        }
+
+        function logout() {
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('view-login').classList.remove('hidden');
+        }
+
+        function renderCalendar() {
+            const monthYearLabel = document.getElementById('month-year-label');
+            const calendarGrid = document.getElementById('calendar-grid');
+
+            monthYearLabel.textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            calendarGrid.innerHTML = '';
+
+            const daysOfWeek = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
+            daysOfWeek.forEach(d => {
+                const head = document.createElement('div');
+                head.className = 'day-head';
+                head.textContent = d;
+                calendarGrid.appendChild(head);
+            });
+
+            const firstDayIndex = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            let startingIndex = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
+
+            const prevMonthDays = new Date(currentYear, currentMonth, 0).getDate();
+            for (let x = startingIndex; x > 0; x--) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day muted';
+                dayDiv.textContent = prevMonthDays - x + 1;
+                calendarGrid.appendChild(dayDiv);
+            }
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day';
+
+                const dayNum = document.createElement('span');
+                dayNum.textContent = i;
+                dayDiv.appendChild(dayNum);
+
+                const mStr = String(currentMonth + 1).padStart(2, '0');
+                const dStr = String(i).padStart(2, '0');
+                const fullDateStr = `${currentYear}-${mStr}-${dStr}`;
+
+                const dayEvents = schoolEvents.filter(e => e.date === fullDateStr);
+                dayEvents.forEach(ev => {
+                    const badge = document.createElement('div');
+                    badge.className = `event-badge ${ev.type}`;
+                    badge.textContent = ev.title;
+                    dayDiv.appendChild(badge);
+                });
+
+                dayDiv.addEventListener('click', () => openEventModal(fullDateStr));
+                calendarGrid.appendChild(dayDiv);
+            }
+
+            renderMonthlyEventsList();
+        }
+
+        function renderMonthlyEventsList() {
+            const listContainer = document.getElementById('monthly-events-list');
+            listContainer.innerHTML = '';
+
+            const mStr = String(currentMonth + 1).padStart(2, '0');
+            const currentMonthEvents = schoolEvents.filter(e => e.date.startsWith(`${currentYear}-${mStr}`));
+
+            if (currentMonthEvents.length === 0) {
+                listContainer.innerHTML = '<p style="color: #888; font-size: 0.9rem;">No hay actividades agendadas para este mes.</p>';
+                return;
+            }
+
+            currentMonthEvents.forEach(ev => {
+                const dayPart = ev.date.split('-')[2];
+                const item = document.createElement('div');
+                item.className = 'event-list-item';
+                item.innerHTML = `
+                    <div class="event-item-info">
+                        <span class="event-date-chip">${dayPart} ${monthNames[currentMonth].substring(0,3)}</span>
+                        <div>
+                            <strong>${ev.title}</strong>
+                            <div style="font-size: 0.75rem; color: #666;">Cargado por: ${ev.source || 'Docente'}</div>
+                        </div>
+                    </div>
+                    <button class="btn-delete-event" onclick="deleteEvent(${ev.id})">
+                        <i class="fa-solid fa-trash"></i> Eliminar
+                    </button>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        function openEventModal(dateStr) {
+            selectedDateStr = dateStr;
+            const [y, m, d] = dateStr.split('-');
+            document.getElementById('event-date-display').value = `${d}/${m}/${y}`;
+            document.getElementById('event-title').value = '';
+
+            const dayEventsContainer = document.getElementById('day-events-container');
+            const dayEventsList = document.getElementById('day-events-list');
+            
+            const existingEvents = schoolEvents.filter(e => e.date === dateStr);
+
+            if (existingEvents.length > 0) {
+                dayEventsContainer.classList.remove('hidden');
+                dayEventsList.innerHTML = '';
+                existingEvents.forEach(ev => {
+                    const row = document.createElement('div');
+                    row.className = 'existing-event-item';
+                    row.innerHTML = `
+                        <span>${ev.title}</span>
+                        <button class="btn-delete-event" onclick="deleteEvent(${ev.id})">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    `;
+                    dayEventsList.appendChild(row);
+                });
+            } else {
+                dayEventsContainer.classList.add('hidden');
+            }
+
+            document.getElementById('modal-event').classList.remove('hidden');
+        }
+
+        function closeEventModal() {
+            document.getElementById('modal-event').classList.add('hidden');
+        }
+
+        function saveEvent() {
+            const title = document.getElementById('event-title').value.trim();
+            const type = document.getElementById('event-type').value;
+
+            if (title === '') {
+                alert('Por favor ingresá un título o descripción para la fecha.');
+                return;
+            }
+
+            schoolEvents.push({
+                id: Date.now(),
+                date: selectedDateStr,
+                title: title,
+                type: type,
+                source: 'Profe Villanueva'
+            });
+
+            closeEventModal();
+            renderCalendar();
+        }
+
+        function deleteEvent(eventId) {
+            schoolEvents = schoolEvents.filter(e => e.id !== eventId);
+            
+            const modal = document.getElementById('modal-event');
+            if (!modal.classList.contains('hidden')) {
+                const remaining = schoolEvents.filter(e => e.date === selectedDateStr);
+                if (remaining.length > 0) {
+                    openEventModal(selectedDateStr);
+                } else {
+                    document.getElementById('day-events-container').classList.add('hidden');
+                }
+            }
+
+            renderCalendar();
+        }
+    </script>
+</body>
+</html>
