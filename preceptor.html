@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Highland School - EduApp Preceptoría</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-cream: #fdfaf3;
+            --navy-dark: #0f2347;
+            --blue-header: #1a365d;
+            --blue-card: #2b579a;
+            --blue-sidebar: #204075;
+            --accent-green: #27ae60;
+            --accent-yellow: #f39c12;
+            --accent-red: #c0392b;
+            --text-dark: #2c3e50;
+            --text-muted: #6c757d;
+            --border-light: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .hidden { display: none !important; }
+
+        .content-view {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* LOGIN */
+        #view-login {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff;
+            position: relative;
+        }
+
+        .login-container {
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .academic-title {
+            font-family: 'Georgia', serif;
+            color: var(--navy-dark);
+            font-size: 2.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 2.5rem;
+            line-height: 1.1;
+        }
+
+        .input-group {
+            background: #f0f0f0;
+            border: 1px solid #b0b0b0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .input-group label {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-right: 8px;
+            white-space: nowrap;
+        }
+
+        .input-group input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--navy-dark);
+            color: #fff;
+            border: none;
+            padding: 10px 40px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: background 0.2s;
+        }
+        .btn-primary:hover { background: var(--blue-header); }
+
+        .brand-logo {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0b2545;
+        }
+
+        .brand-logo span { color: #0099ff; }
+
+        /* LAYOUT GENERAL */
+        .app-layout {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 80px;
+            background: var(--blue-sidebar);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 15px;
+            position: relative;
+            z-index: 10;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        .sidebar.collapsed { margin-left: -80px; }
+
+        .menu-toggle {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+
+        .floating-toggle {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--blue-sidebar);
+            color: #fff;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            font-size: 1.4rem;
+            cursor: pointer;
+            z-index: 5;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .nav-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: #fff;
+            border: none;
+            color: var(--blue-sidebar);
+            font-size: 1.4rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-btn:hover { transform: scale(1.08); }
+
+        .nav-btn.active {
+            background: var(--navy-dark);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(15, 35, 71, 0.6);
+            transform: scale(1.05);
+        }
+
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px 60px;
+            background: var(--bg-cream);
+        }
+
+        .view-title {
+            font-family: 'Georgia', serif;
+            font-size: 2.3rem;
+            color: #000;
+            margin-bottom: 5px;
+        }
+
+        .view-subtitle {
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .btn-profile-badge {
+            background: var(--blue-card);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1.15rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .btn-profile-badge:hover {
+            transform: translateY(-2px);
+            background: var(--blue-sidebar);
+        }
+
+        .btn-back-home {
+            background: var(--navy-dark);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+
+        .btn-back-home:hover { transform: translateX(-3px); }
+
+        /* DASHBOARD */
+        .dashboard-hero {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .school-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .crest-icon { font-size: 4rem; color: #1a4da6; }
+        .school-brand h2 { font-family: 'Georgia', serif; font-size: 3.5rem; color: #000; }
+        .subtitle { font-family: 'Georgia', serif; font-size: 1.4rem; margin-top: 5px; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 260px);
+            gap: 25px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .dash-card {
+            background: var(--blue-card);
+            color: #fff;
+            border-radius: 20px;
+            height: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+        }
+
+        .dash-card:hover { transform: translateY(-3px); }
+        .card-icon { font-size: 2.8rem; }
+        .dash-card span { font-family: 'Georgia', serif; font-size: 1.1rem; letter-spacing: 1px; font-weight: bold; }
+
+        .card-panel {
+            background: #fff;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+
+        /* CURSOS Y ASISTENCIAS */
+        .years-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 220px);
+            gap: 20px;
+            max-width: 720px;
+        }
+
+        .year-card {
+            background: var(--blue-card);
+            color: #fff;
+            border-radius: 16px;
+            height: 110px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+            transition: transform 0.2s, background-color 0.2s;
+            font-family: 'Georgia', serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .year-card:hover {
+            transform: translateY(-3px);
+            background: var(--blue-sidebar);
+        }
+
+        .year-card i { font-size: 1.8rem; }
+
+        .table-container {
+            max-width: 950px;
+            overflow-x: auto;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .admin-table th {
+            background: #eef4ff;
+            color: var(--blue-header);
+            padding: 12px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .admin-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        .badge-status {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .badge-presente { background: #d4efdf; color: #145a32; }
+        .badge-ausente { background: #fadbd8; color: #78281f; }
+        .badge-tarde { background: #fcf3cf; color: #7d6608; }
+        .badge-status.active { background: #d4efdf; color: #145a32; }
+
+        /* Clases para porcentaje de asistencia dinámicas */
+        .badge-attendance-green { background: #d4efdf; color: #145a32; }
+        .badge-attendance-yellow { background: #fcf3cf; color: #7d6608; }
+        .badge-attendance-red { background: #fadbd8; color: #78281f; }
+
+        .btn-att {
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            background: #f8fafc;
+            transition: all 0.2s;
+        }
+        .btn-att.p.active { background: #d4efdf; border-color: #145a32; color: #145a32; }
+        .btn-att.a.active { background: #fadbd8; border-color: #78281f; color: #78281f; }
+        .btn-att.t.active { background: #fcf3cf; border-color: #7d6608; color: #7d6608; }
+
+        /* NOTIFICACIONES */
+        .notif-card-item {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            gap: 15px;
+            margin-bottom: 12px;
+            max-width: 750px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            align-items: flex-start;
+            position: relative;
+        }
+        .notif-icon-box {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .notif-icon-box.urgente { background: #c0392b; }
+        .notif-icon-box.academico { background: #27ae60; }
+        .notif-icon-box.recordatorio { background: #f39c12; }
+        .notif-icon-box.institucional { background: #2980b9; }
+
+        .notif-content h4 { font-size: 1.05rem; color: var(--navy-dark); margin-bottom: 4px; }
+        .notif-content p { font-size: 0.9rem; color: var(--text-dark); margin-bottom: 8px; line-height: 1.4; }
+        
+        .notif-tag {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .notif-tag.urgente { background: #fadbd8; color: #78281f; }
+        .notif-tag.academico { background: #d4efdf; color: #145a32; }
+        .notif-tag.recordatorio { background: #fef9e7; color: #7d6608; }
+        .notif-tag.institucional { background: #ebf5fb; color: #1b4f72; }
+
+        .btn-delete-notif {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #fee2e2;
+            color: #b91c1c;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .btn-delete-notif:hover { background: #fecaca; }
+
+        /* CHAT / COMUNICACION */
+        .chat-container {
+            display: flex;
+            height: 500px;
+            padding: 0;
+            overflow: hidden;
+            max-width: 900px;
+        }
+
+        .chat-sidebar {
+            width: 260px;
+            border-right: 1px solid var(--border-light);
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 6px 10px;
+            gap: 8px;
+        }
+        .search-box input { border: none; outline: none; width: 100%; font-size: 0.85rem; }
+
+        .contact-list { list-style: none; margin-top: 15px; }
+
+        .contact-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+        .contact-item:hover { background: #f8fafc; }
+        .contact-item.active { background: #f0f4fd; border-left: 4px solid var(--blue-sidebar); font-weight: bold; }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+            background: #fff;
+        }
+
+        .chat-header-info {
+            font-weight: bold;
+            font-size: 1rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--navy-dark);
+            margin-bottom: 15px;
+        }
+
+        .chat-messages { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            overflow-y: auto; 
+            flex: 1;
+            padding-right: 5px;
+        }
+
+        .chat-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            word-wrap: break-word;
+        }
+        .chat-bubble.left { background: #aed0f3; align-self: flex-start; color: #0b2545; }
+        .chat-bubble.right { background: #99c2ec; align-self: flex-end; color: #0b2545; }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-light);
+        }
+        .chat-input-area input {
+            flex: 1;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 10px;
+            outline: none;
+        }
+        .btn-send {
+            background: var(--blue-header);
+            color: #fff;
+            border: none;
+            padding: 0 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-send:hover { background: var(--navy-dark); }
+
+        /* CALENDARIO */
+        .calendar-card {
+            background: var(--blue-card);
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 850px;
+            color: #fff;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .calendar-header h2 { font-family: 'Georgia', serif; letter-spacing: 2px; }
+
+        .cal-nav {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .cal-nav:hover { background: rgba(255,255,255,0.5); }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            background: #fff;
+            color: #000;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .day-head {
+            background: #eef4ff;
+            text-align: center;
+            font-weight: bold;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            font-size: 0.85rem;
+            color: var(--blue-header);
+        }
+
+        .day {
+            min-height: 75px;
+            border-right: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            padding: 6px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: background 0.2s;
+        }
+        .day:hover { background: #f8fafc; }
+
+        .event-badge {
+            font-size: 0.68rem;
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: #fff;
+            font-weight: normal;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .event-eval { background-color: #e74c3c; }
+        .event-jornada { background-color: #8e44ad; }
+        .event-notas { background-color: #27ae60; }
+        .event-general { background-color: #2980b9; }
+
+        .monthly-events-card {
+            max-width: 850px;
+            margin-top: 20px;
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        .monthly-events-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--navy-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .event-list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.9rem;
+        }
+        .event-item-info { display: flex; align-items: center; gap: 12px; }
+        .event-date-chip {
+            background: var(--blue-header);
+            color: #fff;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+        }
+
+        /* PERFIL */
+        .profile-header-card {
+            background: var(--navy-dark);
+            color: #fff;
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            max-width: 750px;
+            margin-bottom: 20px;
+        }
+        .avatar-circle {
+            width: 75px; height: 75px; border-radius: 50%; background: #fff; color: var(--navy-dark);
+            display: flex; justify-content: center; align-items: center; font-size: 2rem; font-family: 'Georgia', serif; font-weight: bold;
+        }
+        .profile-header-info h2 { font-family: 'Georgia', serif; font-size: 1.5rem; }
+        .role-highlight { color: #f39c12; font-size: 0.9rem; font-weight: 600; margin: 3px 0; }
+        .subtext { font-size: 0.8rem; opacity: 0.8; }
+        .profile-section { max-width: 750px; }
+        .profile-section h3 { font-size: 1.1rem; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .yellow-icon { color: #f39c12; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .field-box label { display: block; font-size: 0.75rem; font-weight: bold; color: var(--text-muted); margin-bottom: 4px; }
+        .field-box input { width: 100%; padding: 10px; background: #e9ecef; border: 1px solid #ccc; border-radius: 8px; }
+        .logout-wrapper { max-width: 750px; text-align: center; margin-top: 25px; margin-bottom: 30px; }
+        .btn-logout { background: #fff; border: 1px solid #c0392b; color: #c0392b; padding: 10px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+        /* MODALES Y SECCIONES INTERACTIVAS */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 999;
+        }
+        .modal-body {
+            background: #fff; border-radius: 16px; padding: 25px; width: 100%; max-width: 750px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;
+        }
+        .modal-body h3 { margin-bottom: 15px; color: var(--navy-dark); }
+        .modal-field { margin-bottom: 15px; }
+        .modal-field label { display: block; font-size: 0.85rem; font-weight: bold; margin-bottom: 5px; color: var(--text-dark); }
+        .modal-field input, .modal-field select, .modal-field textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; outline: none; font-size: 0.95rem; font-family: inherit; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .btn-cancel { background: #e0e0e0; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-edit-action { background: var(--blue-header); color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        
+        .sections-menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .section-menu-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--navy-dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .section-menu-btn:hover {
+            background: #e2e8f0;
+            border-color: var(--blue-card);
+            transform: translateX(3px);
+        }
+        .section-menu-btn i.fa-chevron-right {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .subview-container {
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+        .subview-top-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .subview-top-header h4 {
+            font-size: 1.2rem;
+            color: var(--navy-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-grid-boxes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .info-box-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+        }
+        .info-box-item.full-width {
+            grid-column: span 2;
+        }
+        .info-box-item label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .info-box-item span, .info-box-item p {
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+        .info-box-item input, .info-box-item textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            outline: none;
+            background: #fff;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN -->
+    <div id="view-login" class="screen active">
+        <div class="login-container">
+            <h1 class="academic-title">PRECEPTORÍA<br>ESCOLAR</h1>
+            <form id="login-form" onsubmit="ingresarAlSistema(event)">
+                <div class="input-group">
+                    <label>Usuario:</label>
+                    <input type="text" id="username" value="PrecCarlos" required>
+                </div>
+                <div class="input-group">
+                    <label>Contraseña:</label>
+                    <input type="password" id="password" value="********" required>
+                </div>
+                <button type="submit" class="btn-primary" onclick="ingresarAlSistema(event)">Ingresar</button>
+            </form>
+            <div class="brand-logo">Edu<span>App</span></div>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="main-app" class="app-layout hidden">
+        <button id="floating-menu-toggle" class="floating-toggle hidden" onclick="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <aside class="sidebar" id="sidebar">
+            <button class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+            <div class="sidebar-nav">
+                <button class="nav-btn" data-target="view-notificaciones" onclick="navigateTo('view-notificaciones')" title="Notificaciones"><i class="fa-solid fa-file-lines"></i></button>
+                <button class="nav-btn" data-target="view-asistencias" onclick="navigateTo('view-asistencias')" title="Control de Asistencias y Alumnos"><i class="fa-solid fa-clipboard-user"></i></button>
+                <button class="nav-btn active" data-target="view-dashboard" onclick="navigateTo('view-dashboard')" title="Inicio"><i class="fa-solid fa-house"></i></button>
+                <button class="nav-btn" data-target="view-calendario" onclick="navigateTo('view-calendario')" title="Calendario"><i class="fa-solid fa-calendar-days"></i></button>
+                <button class="nav-btn" data-target="view-comunicacion" onclick="navigateTo('view-comunicacion')" title="Comunicación"><i class="fa-solid fa-comments"></i></button>
+            </div>
+        </aside>
+
+        <main class="content-area">
+
+            <!-- INICIO -->
+            <section id="view-dashboard" class="content-view active">
+                <div class="top-header">
+                    <button class="btn-profile-badge" onclick="navigateTo('view-perfil')">
+                        <i class="fa-solid fa-user-tie"></i> Mi Perfil (Preceptoría)
+                    </button>
+                </div>
+                <div class="dashboard-hero">
+                    <div class="school-brand">
+                        <div class="crest-icon"><i class="fa-solid fa-building-columns"></i></div>
+                        <h2>Highland School</h2>
+                    </div>
+                    <p class="subtitle">Panel de Control de Preceptoría</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dash-card" onclick="navigateTo('view-calendario')">
+                        <i class="fa-solid fa-calendar-days card-icon"></i>
+                        <span>CALENDARIO</span>
+                    </div>
+                    <div class="dash-card" onclick="navigateTo('view-asistencias')">
+                        <i class="fa-solid fa-clipboard-user card-icon"></i>
+                        <span>ASISTENCIAS Y CURSOS</span>
+                    </div>
+                    <div class="dash-card" onclick="navigateTo('view-notificaciones')">
+                        <i class="fa-solid fa-file-lines card-icon"></i>
+                        <span>NOTIFICACIONES</span>
+                    </div>
+                    <div class="dash-card" onclick="navigateTo('view-comunicacion')">
+                        <i class="fa-solid fa-comments card-icon"></i>
+                        <span>COMUNICACIÓN</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ASISTENCIAS Y CURSOS -->
+            <section id="view-asistencias" class="content-view hidden">
+                
+                <!-- SELECCIÓN DE AÑOS -->
+                <div id="preceptor-years-view">
+                    <h1 class="view-title">CONTROL DE ASISTENCIAS</h1>
+                    <p class="view-subtitle">Seleccioná el año a cargo para tomar asistencia o revisar legajos</p>
+                    <div class="years-grid">
+                        <div class="year-card" onclick="selectYear('Primer Año')"><i class="fa-solid fa-graduation-cap"></i><span>Primer Año</span></div>
+                        <div class="year-card" onclick="selectYear('Segundo Año')"><i class="fa-solid fa-graduation-cap"></i><span>Segundo Año</span></div>
+                        <div class="year-card" onclick="selectYear('Tercer Año')"><i class="fa-solid fa-graduation-cap"></i><span>Tercer Año</span></div>
+                        <div class="year-card" onclick="selectYear('Cuarto Año')"><i class="fa-solid fa-graduation-cap"></i><span>Cuarto Año</span></div>
+                        <div class="year-card" onclick="selectYear('Quinto Año')"><i class="fa-solid fa-graduation-cap"></i><span>Quinto Año</span></div>
+                        <div class="year-card" onclick="selectYear('Sexto Año')"><i class="fa-solid fa-graduation-cap"></i><span>Sexto Año</span></div>
+                    </div>
+                </div>
+
+                <!-- SELECCIÓN DE DIVISIONES -->
+                <div id="preceptor-divisions-view" class="hidden">
+                    <button class="btn-back-home" onclick="backToYears()"><i class="fa-solid fa-arrow-left"></i> Volver a Años</button>
+                    <h1 class="view-title" id="preceptor-divisions-title">Divisiones</h1>
+                    <p class="view-subtitle">Seleccioná la división</p>
+                    <div class="years-grid" style="grid-template-columns: repeat(4, 165px);">
+                        <div class="year-card" onclick="selectDivision('1ra')"><i class="fa-solid fa-users"></i><span style="font-size:0.95rem;">1ª División</span></div>
+                        <div class="year-card" onclick="selectDivision('2da')"><i class="fa-solid fa-users"></i><span style="font-size:0.95rem;">2ª División</span></div>
+                        <div class="year-card" onclick="selectDivision('3ra')"><i class="fa-solid fa-users"></i><span style="font-size:0.95rem;">3ª División</span></div>
+                        <div class="year-card" onclick="selectDivision('4ta')"><i class="fa-solid fa-users"></i><span style="font-size:0.95rem;">4ª División</span></div>
+                    </div>
+                </div>
+
+                <!-- TABLA DE ALUMNOS -->
+                <div id="preceptor-table-view" class="hidden">
+                    <button class="btn-back-home" onclick="backToDivisions()"><i class="fa-solid fa-arrow-left"></i> Volver a Divisiones</button>
+                    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 950px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <h1 class="view-title" id="preceptor-course-title" style="margin-bottom:0;">Curso</h1>
+                            <p class="view-subtitle" style="margin-bottom:0;">Registro diario de asistencia, conducta y legajos</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn-edit-action" style="background: var(--blue-card);" onclick="openProfessorsModal()">
+                                <i class="fa-solid fa-chalkboard-user"></i> Ver Profesores y Horarios
+                            </button>
+                            <button class="btn-edit-action" onclick="alert('Asistencia guardada correctamente para el día de la fecha.')">
+                                <i class="fa-solid fa-floppy-disk"></i> Guardar Asistencia
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card-panel table-container" style="margin-bottom: 0;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px; text-align: center;">N.º</th>
+                                    <th>Alumno</th>
+                                    <th>DNI</th>
+                                    <th>Asistencia Diario</th>
+                                    <th>Tardanzas</th>
+                                    <th>Amonestaciones</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="preceptor-students-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- NOTIFICACIONES -->
+            <section id="view-notificaciones" class="content-view hidden">
+                <div style="display: flex; justify-content: space-between; align-items: center; max-width: 750px; margin-bottom: 20px;">
+                    <div>
+                        <h1 class="view-title" style="margin-bottom: 0;">NOTIFICACIONES</h1>
+                        <p class="view-subtitle" style="margin-bottom: 0;">Avisos institucionales, directivos y de preceptoría</p>
+                    </div>
+                    <button class="btn-edit-action" onclick="openUploadNotificationModal()" style="padding: 10px 16px; font-size: 0.9rem;">
+                        <i class="fa-solid fa-upload"></i> Subir Notificación
+                    </button>
+                </div>
+
+                <div class="notifications-list" id="notifications-container" style="max-width: 750px;"></div>
+            </section>
+
+            <!-- CALENDARIO -->
+            <section id="view-calendario" class="content-view hidden">
+                <h1 class="view-title">CALENDARIO DE PRECEPTORÍA</h1>
+                <p class="view-subtitle">Eventos, formaciones, entrega de boletines y reuniones de padres 2026</p>
+                <div class="calendar-card">
+                    <div class="calendar-header">
+                        <button class="cal-nav" onclick="prevMonth()">&lt;</button>
+                        <h2 id="month-year-label">ENERO 2026</h2>
+                        <button class="cal-nav" onclick="nextMonth()">&gt;</button>
+                    </div>
+                    <div class="calendar-grid" id="calendar-grid"></div>
+                </div>
+                <div class="monthly-events-card">
+                    <h3><i class="fa-solid fa-list-check yellow-icon"></i> Eventos del Mes</h3>
+                    <div id="monthly-events-list"></div>
+                </div>
+            </section>
+
+            <!-- COMUNICACIÓN -->
+            <section id="view-comunicacion" class="content-view hidden">
+                <h1 class="view-title">COMUNICACIÓN INSTITUCIONAL</h1>
+                <div class="card-panel chat-container">
+                    <div class="chat-sidebar">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" placeholder="Buscar chat...">
+                        </div>
+                        <ul class="contact-list" id="contact-list"></ul>
+                    </div>
+                    <div class="chat-main">
+                        <div class="chat-header-info" id="active-chat-name">Selecciona un chat</div>
+                        <div class="chat-messages" id="chat-messages"></div>
+                        <form id="chat-form" class="chat-input-area" onsubmit="enviarMensaje(event)">
+                            <input type="text" id="chat-input" placeholder="Escribir un mensaje..." required>
+                            <button type="submit" class="btn-send">Enviar</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MI PERFIL -->
+            <section id="view-perfil" class="content-view hidden">
+                <button class="btn-back-home" onclick="navigateTo('view-dashboard')"><i class="fa-solid fa-arrow-left"></i> Volver al Inicio</button>
+                <h1 class="view-title">Perfil de Preceptor</h1>
+                <p class="view-subtitle">Datos institucionales y turnos a cargo</p>
+                <div class="profile-header-card">
+                    <div class="avatar-circle">CP</div>
+                    <div class="profile-header-info">
+                        <h2>Carlos Pérez</h2>
+                        <p class="role-highlight">Preceptor Titular</p>
+                        <p class="subtext">Legajo N.º 0442 · Turno Mañana y Tarde</p>
+                    </div>
+                </div>
+                <div class="card-panel profile-section">
+                    <h3><i class="fa-regular fa-user"></i> Datos del puesto</h3>
+                    <div class="form-grid">
+                        <div class="field-box"><label>CARGO</label><input type="text" value="Preceptor de Ciclo Superior" readonly></div>
+                        <div class="field-box"><label>TURNO</label><input type="text" value="Mañana" readonly></div>
+                        <div class="field-box"><label>CORREO INSTITUCIONAL</label><input type="email" value="carlos.preceptor@highlandschool.edu.ar" readonly></div>
+                        <div class="field-box"><label>INTERNO</label><input type="text" value="Int. 208" readonly></div>
+                    </div>
+                </div>
+                <div class="logout-wrapper"><button class="btn-logout" onclick="logout()">Cerrar Sesión</button></div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL "VER MÁS" LEGAJO DE ALUMNO (6 SECCIONES INTERACTIVAS) -->
+    <div id="modal-student-detail" class="modal-overlay hidden">
+        <div class="modal-body">
+            <h3 id="student-modal-title" style="margin-bottom: 20px;">Legajo Completo del Alumno</h3>
+
+            <!-- MENÚ DE SECCIONES -->
+            <div id="student-sections-menu-view" class="sections-menu-list">
+                <div class="section-menu-btn" onclick="openStudentSection(1)">
+                    <span><i class="fa-solid fa-id-card" style="margin-right:10px; color:var(--blue-card);"></i> 1. Datos Personales y de Identificación Básica</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+                <div class="section-menu-btn" onclick="openStudentSection(2)">
+                    <span><i class="fa-solid fa-users" style="margin-right:10px; color:var(--blue-card);"></i> 2. Datos de Contacto y Autorizaciones (Adultos Responsables)</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+                <div class="section-menu-btn" onclick="openStudentSection(3)">
+                    <span><i class="fa-solid fa-heart-pulse" style="margin-right:10px; color:var(--blue-card);"></i> 3. Ficha Médica y de Emergencia</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+                <div class="section-menu-btn" onclick="openStudentSection(4)">
+                    <span><i class="fa-solid fa-clipboard-user" style="margin-right:10px; color:var(--blue-card);"></i> 4. Registro de Asistencia y Puntualidad</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+                <div class="section-menu-btn" onclick="openStudentSection(5)">
+                    <span><i class="fa-solid fa-shield-halved" style="margin-right:10px; color:var(--blue-card);"></i> 5. Registro Disciplinario, Convivencia y Seguimiento</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+                <div class="section-menu-btn" onclick="openStudentSection(6)">
+                    <span><i class="fa-solid fa-graduation-cap" style="margin-right:10px; color:var(--blue-card);"></i> 6. Información Académica General (Orientativa)</span>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <!-- VISTA DETALLE DE SECCIÓN -->
+            <div id="student-section-detail-view" class="subview-container hidden">
+                <div class="subview-top-header">
+                    <h4 id="student-subview-title"><i class="fa-solid fa-folder-open"></i> Título</h4>
+                    <button class="btn-back-home" style="margin-bottom:0; padding:6px 12px; font-size:0.85rem;" onclick="backToStudentMenu()">
+                        <i class="fa-solid fa-arrow-left"></i> Volver a Secciones
+                    </button>
+                </div>
+                <div class="info-grid-boxes" id="student-subview-boxes"></div>
+            </div>
+
+            <div class="modal-actions" style="margin-top: 25px;">
+                <button class="btn-cancel" onclick="closeStudentModal()">Cerrar</button>
+                <button id="btn-toggle-edit-student" class="btn-edit-action" onclick="toggleEditStudentMode()"><i class="fa-solid fa-pen"></i> Habilitar Edición</button>
+                <button id="btn-save-student" class="btn-primary hidden" style="margin-top:0;" onclick="saveStudentChanges()"><i class="fa-solid fa-floppy-disk"></i> Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PROFESORES Y HORARIOS DEL CURSO -->
+    <div id="modal-professors" class="modal-overlay hidden">
+        <div class="modal-body" style="max-width: 800px;">
+            <h3 id="professors-modal-title" style="margin-bottom: 15px;">Profesores y Horarios a Cargo</h3>
+            <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Materia</th>
+                            <th>Profesor/a a Cargo</th>
+                            <th>Día</th>
+                            <th>Horario</th>
+                        </tr>
+                    </thead>
+                    <tbody id="professors-tbody"></tbody>
+                </table>
+            </div>
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button class="btn-cancel" onclick="closeProfessorsModal()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SUBIR NOTIFICACIÓN -->
+    <div id="modal-upload-notification" class="modal-overlay hidden">
+        <div class="modal-body">
+            <h3>Subir Nueva Notificación</h3>
+            <div class="modal-field">
+                <label>Título del aviso:</label>
+                <input type="text" id="notif-form-title" placeholder="Ej: Justificativos médicos / Acto escolar">
+            </div>
+            <div class="modal-field">
+                <label>Mensaje / Descripción:</label>
+                <textarea id="notif-form-desc" rows="3" placeholder="Detalle la información..."></textarea>
+            </div>
+            <div class="modal-field">
+                <label>Categoría:</label>
+                <select id="notif-form-category">
+                    <option value="urgente">Urgente</option>
+                    <option value="academico">Académico</option>
+                    <option value="recordatorio">Recordatorio</option>
+                    <option value="institucional">Institucional</option>
+                </select>
+            </div>
+            <div class="modal-field">
+                <label>Sección de visualización:</label>
+                <select id="notif-form-section">
+                    <option value="HOY">Hoy</option>
+                    <option value="AYER">Ayer</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeUploadNotificationModal()">Cancelar</button>
+                <button class="btn-primary" style="margin-top:0;" onclick="saveNewNotification()">Publicar Notificación</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // NOTIFICACIONES
+        let notificationsDB = [
+            { id: 1, section: "HOY", title: "Revisión de libretas y firmas", desc: "Recordar a los alumnos de 3° año la entrega de las autorizaciones firmadas.", category: "recordatorio", icon: "fa-clock" },
+            { id: 2, section: "HOY", title: "Ausencia docente aviso", desc: "El profesor de Matemática de 4° 1ª no concurrirá. Los alumnos ingresan 2 horas más tarde.", category: "urgente", icon: "fa-triangle-exclamation" },
+            { id: 3, section: "AYER", title: "Protocolo de ingresos", desc: "Se recuerda el cierre de portón principal a las 07:45 hs en punto.", category: "institucional", icon: "fa-house-chimney" }
+        ];
+
+        function renderNotifications() {
+            const container = document.getElementById('notifications-container');
+            container.innerHTML = '';
+            ["HOY", "AYER"].forEach(secName => {
+                let items = notificationsDB.filter(n => n.section === secName);
+                if (items.length > 0) {
+                    let span = document.createElement('span');
+                    span.style.cssText = 'font-weight:bold; color:var(--text-muted); font-size:0.85rem; display:block; margin: 15px 0 8px 0;';
+                    span.textContent = secName;
+                    container.appendChild(span);
+
+                    items.forEach(notif => {
+                        let div = document.createElement('div');
+                        div.className = 'notif-card-item';
+                        div.innerHTML = `
+                            <div class="notif-icon-box ${notif.category}"><i class="fa-solid ${notif.icon}"></i></div>
+                            <div class="notif-content" style="flex: 1; padding-right: 30px;">
+                                <h4>${notif.title}</h4>
+                                <p>${notif.desc}</p>
+                                <span class="notif-tag ${notif.category}">${notif.category.toUpperCase()}</span>
+                            </div>
+                            <button class="btn-delete-notif" onclick="deleteNotification(${notif.id})"><i class="fa-solid fa-trash"></i></button>
+                        `;
+                        container.appendChild(div);
+                    });
+                }
+            });
+        }
+
+        function openUploadNotificationModal() {
+            document.getElementById('notif-form-title').value = '';
+            document.getElementById('notif-form-desc').value = '';
+            document.getElementById('modal-upload-notification').classList.remove('hidden');
+        }
+        function closeUploadNotificationModal() { document.getElementById('modal-upload-notification').classList.add('hidden'); }
+        function saveNewNotification() {
+            let title = document.getElementById('notif-form-title').value.trim();
+            let desc = document.getElementById('notif-form-desc').value.trim();
+            let category = document.getElementById('notif-form-category').value;
+            let section = document.getElementById('notif-form-section').value;
+            if(!title || !desc) { alert('Complete los campos'); return; }
+            let iconMap = { urgente: "fa-triangle-exclamation", academico: "fa-file-lines", recordatorio: "fa-clock", institucional: "fa-house-chimney" };
+            notificationsDB.unshift({ id: Date.now(), section, title, desc, category, icon: iconMap[category] || "fa-bell" });
+            closeUploadNotificationModal();
+            renderNotifications();
+        }
+        function deleteNotification(id) {
+            notificationsDB = notificationsDB.filter(n => n.id !== id);
+            renderNotifications();
+        }
+
+        // ALUMNOS Y ASISTENCIAS POR CURSO
+        let studentsDB = {};
+        const yearsList = ["Primer Año", "Segundo Año", "Tercer Año", "Cuarto Año", "Quinto Año", "Sexto Año"];
+        const divisionsList = ["1ra", "2da", "3ra", "4ta"];
+        const nombres = ["Mateo", "Sofía", "Lucas", "Valentina", "Thiago", "Martina", "Benjamín", "Catalina", "Joaquín", "Camila", "Juan", "Lucía", "Lautaro", "Victoria", "Agustín", "María", "Tomás", "Mía", "Nicolás", "Julieta"];
+        const apellidos = ["Gómez", "Torres", "Giménez", "Benítez", "Ledesma", "Pérez", "Rodríguez", "González", "Fernández", "López", "Martínez", "Sánchez", "Romero", "Sosa", "Álvarez", "Acosta", "Medina"];
+        
+        const nombresPadres = ["Alberto", "Claudia", "Marcelo", "Silvia", "Daniel", "Patricia", "Eduardo", "Liliana", "Gabriel", "Adriana", "Jorge", "Mónica", "Ricardo", "Viviana", "Héctor", "Alejandra", "Sergio", "Graciela"];
+        const nombresAutorizados = ["Carlos", "Rosa", "Esteban", "Beatriz", "Fernando", "Susana", "Miguel", "Marta", "Raúl", "Elena", "Mario", "Teresa", "Alberto", "Carmen"];
+
+        // HORARIOS Y PROFESORES POR CURSO DE EJEMPLO
+        const courseProfessors = {
+            "Matemática": { prof: "Lic. Roberto Gómez", dia: "Lunes y Miércoles", hora: "08:00 - 09:30 hs" },
+            "Prácticas del Lenguaje": { prof: "Prof. Ana María Torres", dia: "Martes y Jueves", hora: "09:40 - 11:10 hs" },
+            "Historia": { prof: "Prof. Esteban Morales", dia: "Viernes", hora: "07:45 - 09:15 hs" },
+            "Inglés": { prof: "Prof. Claudia Smith", dia: "Lunes y Jueves", hora: "11:20 - 12:40 hs" },
+            "Educación Física": { prof: "Prof. Marcos Giménez", dia: "Miércoles", hora: "13:30 - 15:30 hs" },
+            "Biología": { prof: "Dra. Patricia Benítez", dia: "Martes", hora: "11:20 - 12:50 hs" }
+        };
+
+        function generarAlumnos() {
+            yearsList.forEach((year, yIdx) => {
+                divisionsList.forEach((div, dIdx) => {
+                    let key = `${year} - ${div}`;
+                    studentsDB[key] = [];
+                    for(let i=0; i<25; i++) {
+                        let nom = nombres[(i*3 + yIdx + dIdx)%nombres.length];
+                        let ape = apellidos[(i*7 + yIdx*2)%apellidos.length];
+                        
+                        let nomPadre1 = nombresPadres[(i * 2) % nombresPadres.length];
+                        let nomPadre2 = nombresPadres[(i * 2 + 1) % nombresPadres.length];
+                        let nomAut1 = nombresAutorizados[(i * 3) % nombresAutorizados.length];
+                        let apeAut1 = apellidos[(i * 5 + 3) % apellidos.length];
+                        let nomAut2 = nombresAutorizados[(i * 3 + 1) % nombresAutorizados.length];
+                        let apeAut2 = apellidos[(i * 5 + 7) % apellidos.length];
+
+                        studentsDB[key].push({
+                            legajoNum: `LEG-ALU-${yIdx+1}${dIdx+1}-${100 + i}`,
+                            name: `${nom} ${ape}`,
+                            anioDiv: `${year} (${dIdx+1}ª División)`,
+                            dni: `49.${100+i}.${300+i}`,
+                            fechaNac: "14/05/2011",
+                            domicilio: `Calle ${10 + i} n° 120, Berazategui`,
+                            
+                            tutor1: `${nomPadre1} ${ape} y ${nomPadre2} ${ape}`,
+                            telPrincipal: `(011) 15-4455-66${i}`,
+                            telSecundario: `(011) 15-9988-77${i}`,
+                            emailTutor: `tutor.${nomPadre1.toLowerCase()}.${ape.toLowerCase()}@gmail.com`,
+                            retira: "Sí",
+                            personasAutorizadas: `Tío/a (${nomAut1} ${apeAut1}), Abuelo/a (${nomAut2} ${apeAut2})`,
+
+                            obraSocial: "OSDE (N° Afiliado: 44129384-0)",
+                            grupoSanguineo: "0 positivo (0+)",
+                            alergias: "Ninguna conocida / Sin patologías crónicas",
+                            medicacion: "Ninguna habitual",
+                            aptoFisico: "Aprobado (Vigente hasta 12/2026)",
+                            contactoEmergencia: "Dr. Walter Fernández (Tel: 0800-444-1234)",
+
+                            asistencia: 'Presente',
+                            numFaltas: 2,
+                            numTardanzas: i%4 === 0 ? 1 : 0,
+                            faltasAcumuladas: "2 inasistencias injustificadas",
+                            certificadosMedicos: "1 certificado presentado el 10/04",
+
+                            amonestaciones: i%7 === 0 ? '1 apercibimiento' : '0',
+                            historialDisciplinario: i%7 === 0 ? 'Llamado de atención por uso de celular en clase' : 'Sin sanciones registradas',
+                            observacionesConducta: "Buena predisposición y participación general",
+                            adecuaciones: "Ninguna adecuación curricular necesaria",
+
+                            condicion: "Regular",
+                            materiasPrevias: "Ninguna"
+                        });
+                    }
+                });
+            });
+        }
+        generarAlumnos();
+
+        let selectedYear = "";
+        let selectedDivision = "";
+        let selectedStudentIndex = null;
+        let currentStudentSection = 1;
+        let isEditingStudent = false;
+
+        function selectYear(y) {
+            selectedYear = y;
+            document.getElementById('preceptor-years-view').classList.add('hidden');
+            document.getElementById('preceptor-divisions-view').classList.remove('hidden');
+            document.getElementById('preceptor-divisions-title').textContent = y;
+        }
+        function backToYears() {
+            document.getElementById('preceptor-divisions-view').classList.add('hidden');
+            document.getElementById('preceptor-years-view').classList.remove('hidden');
+        }
+        function selectDivision(d) {
+            selectedDivision = d;
+            let num = d.replace(/\D/g, '');
+            document.getElementById('preceptor-divisions-view').classList.add('hidden');
+            document.getElementById('preceptor-table-view').classList.remove('hidden');
+            document.getElementById('preceptor-course-title').textContent = `${selectedYear} - ${num}ª División`;
+            renderStudentsTable();
+        }
+        function backToDivisions() {
+            document.getElementById('preceptor-table-view').classList.add('hidden');
+            document.getElementById('preceptor-divisions-view').classList.remove('hidden');
+        }
+
+        function renderStudentsTable() {
+            const tbody = document.getElementById('preceptor-students-tbody');
+            tbody.innerHTML = '';
+            let key = `${selectedYear} - ${selectedDivision}`;
+            let list = studentsDB[key] || [];
+
+            list.forEach((st, idx) => {
+                let tr = document.createElement('tr');
+                let badgeClass = st.asistencia === 'Presente' ? 'badge-presente' : (st.asistencia === 'Ausente' ? 'badge-ausente' : 'badge-tarde');
+                let tardanzaTexto = st.numTardanzas > 0 ? `${st.numTardanzas} tardanza(s)` : 'Ninguna';
+                tr.innerHTML = `
+                    <td style="text-align: center; font-weight: bold; color: var(--text-muted);">${idx + 1}</td>
+                    <td><strong>${st.name}</strong></td>
+                    <td>${st.dni}</td>
+                    <td><span class="badge-status ${badgeClass}">${st.asistencia}</span></td>
+                    <td>${tardanzaTexto}</td>
+                    <td><span>${st.amonestaciones}</span></td>
+                    <td>
+                        <button class="btn-att p ${st.asistencia==='Presente'?'active':''}" onclick="setAsistencia(${idx}, 'Presente')">P</button>
+                        <button class="btn-att a ${st.asistencia==='Ausente'?'active':''}" onclick="setAsistencia(${idx}, 'Ausente')">A</button>
+                        <button class="btn-att t ${st.asistencia==='Tarde'?'active':''}" onclick="setAsistencia(${idx}, 'Tarde')">T</button>
+                        <button class="btn-edit-action" style="padding:5px 10px; font-size:0.8rem; margin-left:6px;" onclick="openStudentModal(${idx})">
+                            <i class="fa-solid fa-eye"></i> Ver más
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function setAsistencia(idx, estado) {
+            let key = `${selectedYear} - ${selectedDivision}`;
+            let st = studentsDB[key][idx];
+            st.asistencia = estado;
+            if (estado === 'Ausente') {
+                st.numFaltas += 1;
+                st.faltasAcumuladas = `${st.numFaltas} inasistencias injustificadas`;
+            } else if (estado === 'Tarde') {
+                st.numTardanzas += 1;
+            }
+            renderStudentsTable();
+        }
+
+        // MODAL PROFESORES Y HORARIOS
+        function openProfessorsModal() {
+            let num = selectedDivision.replace(/\D/g, '');
+            document.getElementById('professors-modal-title').textContent = `Profesores y Horarios - ${selectedYear} (${num}ª División)`;
+            const tbody = document.getElementById('professors-tbody');
+            tbody.innerHTML = '';
+            for (let mat in courseProfessors) {
+                let info = courseProfessors[mat];
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>${mat}</strong></td>
+                    <td>${info.prof}</td>
+                    <td>${info.dia}</td>
+                    <td><span class="badge-status badge-presente">${info.hora}</span></td>
+                `;
+                tbody.appendChild(tr);
+            }
+            document.getElementById('modal-professors').classList.remove('hidden');
+        }
+
+        function closeProfessorsModal() {
+            document.getElementById('modal-professors').classList.add('hidden');
+        }
+
+        // MODAL VER MÁS ALUMNO CON 6 SECCIONES (ESTILO SECRETARÍA)
+        function openStudentModal(index) {
+            selectedStudentIndex = index;
+            isEditingStudent = false;
+            let key = `${selectedYear} - ${selectedDivision}`;
+            let s = studentsDB[key][index];
+
+            document.getElementById('student-modal-title').textContent = `Legajo del Alumno: ${s.name}`;
+            backToStudentMenu();
+            document.getElementById('modal-student-detail').classList.remove('hidden');
+        }
+
+        function openStudentSection(sectionNum) {
+            currentStudentSection = sectionNum;
+            document.getElementById('student-sections-menu-view').classList.add('hidden');
+            document.getElementById('student-section-detail-view').classList.remove('hidden');
+            renderStudentSectionBoxes();
+        }
+
+        function backToStudentMenu() {
+            document.getElementById('student-section-detail-view').classList.add('hidden');
+            document.getElementById('student-sections-menu-view').classList.remove('hidden');
+        }
+
+        function renderStudentSectionBoxes() {
+            let titleEl = document.getElementById('student-subview-title');
+            let container = document.getElementById('student-subview-boxes');
+            container.innerHTML = '';
+            let key = `${selectedYear} - ${selectedDivision}`;
+            let s = studentsDB[key][selectedStudentIndex];
+
+            // Cálculo del porcentaje de asistencia (Límite = 45 faltas, tardanzas = 0.25 falta)
+            let totalFaltasEquivalentes = (s.numFaltas || 0) + ((s.numTardanzas || 0) * 0.25);
+            let porcentajeRestante = Math.max(0, 100 - ((totalFaltasEquivalentes / 45) * 25));
+            let porcentajeRedondeado = porcentajeRestante.toFixed(1) + "%";
+
+            // Asignación de colores según requerimiento:
+            // Verde: re bien de faltas (> 88%)
+            // Amarillo: más o menos (entre 76% y 88%)
+            // Rojo: a nada de llegar al 75% (<= 76%)
+            let attendanceColorClass = "badge-attendance-green";
+            if (porcentajeRestante <= 76) {
+                attendanceColorClass = "badge-attendance-red";
+            } else if (porcentajeRestante <= 88) {
+                attendanceColorClass = "badge-attendance-yellow";
+            }
+
+            if (currentStudentSection === 1) {
+                titleEl.innerHTML = `<i class="fa-solid fa-id-card" style="color:var(--blue-card);"></i> 1. Datos Personales y de Identificación Básica`;
+                container.innerHTML = `
+                    <div class="info-box-item full-width"><label>Nombre y Apellido Completo</label><span>${s.name}</span></div>
+                    <div class="info-box-item"><label>Año y División</label><span>${s.anioDiv}</span></div>
+                    <div class="info-box-item"><label>Número de Legajo / Matrícula</label><span>${s.legajoNum}</span></div>
+                    <div class="info-box-item"><label>DNI</label><span>${s.dni}</span></div>
+                    <div class="info-box-item"><label>Fecha de Nacimiento</label><span>${s.fechaNac}</span></div>
+                    <div class="info-box-item full-width"><label>Domicilio Actual</label><span id="s-val-dom">${s.domicilio}</span><input type="text" id="s-inp-dom" class="hidden" value="${s.domicilio}"></div>
+                `;
+            } else if (currentStudentSection === 2) {
+                titleEl.innerHTML = `<i class="fa-solid fa-users" style="color:var(--blue-card);"></i> 2. Datos de Contacto y Autorizaciones (Adultos Responsables)`;
+                container.innerHTML = `
+                    <div class="info-box-item full-width"><label>Padres, Tutores o Encargados Legales</label><span>${s.tutor1}</span></div>
+                    <div class="info-box-item"><label>Teléfono Principal</label><span id="s-val-tel1">${s.telPrincipal}</span><input type="text" id="s-inp-tel1" class="hidden" value="${s.telPrincipal}"></div>
+                    <div class="info-box-item"><label>Teléfono Secundario</label><span id="s-val-tel2">${s.telSecundario}</span><input type="text" id="s-inp-tel2" class="hidden" value="${s.telSecundario}"></div>
+                    <div class="info-box-item full-width"><label>Correo Electrónico de Tutores</label><span>${s.emailTutor}</span></div>
+                    <div class="info-box-item"><label>Retira al Alumno (Sí/No)</label><span id="s-val-retira">${s.retira}</span><input type="text" id="s-inp-retira" class="hidden" value="${s.retira}"></div>
+                    <div class="info-box-item"><label>Personas Autorizadas Adicionales</label><span id="s-val-aut">${s.personasAutorizadas}</span><input type="text" id="s-inp-aut" class="hidden" value="${s.personasAutorizadas}"></div>
+                `;
+            } else if (currentStudentSection === 3) {
+                titleEl.innerHTML = `<i class="fa-solid fa-heart-pulse" style="color:var(--blue-card);"></i> 3. Ficha Médica y de Emergencia`;
+                container.innerHTML = `
+                    <div class="info-box-item full-width"><label>Obra Social / Prepaga y N° Afiliado</label><span>${s.obraSocial}</span></div>
+                    <div class="info-box-item"><label>Grupo Sanguíneo y Factor RH</label><span>${s.grupoSanguineo}</span></div>
+                    <div class="info-box-item"><label>Alergias o Condiciones Crónicas</label><span>${s.alergias}</span></div>
+                    <div class="info-box-item"><label>Medicación Habitual</label><span>${s.medicacion}</span></div>
+                    <div class="info-box-item full-width"><label>Certificado de Aptitud Física</label><span id="s-val-apto">${s.aptoFisico}</span><input type="text" id="s-inp-apto" class="hidden" value="${s.aptoFisico}"></div>
+                    <div class="info-box-item full-width"><label>Contactos de Emergencia Médica</label><span>${s.contactoEmergencia}</span></div>
+                `;
+            } else if (currentStudentSection === 4) {
+                titleEl.innerHTML = `<i class="fa-solid fa-clipboard-user" style="color:var(--blue-card);"></i> 4. Registro de Asistencia y Puntualidad`;
+                container.innerHTML = `
+                    <div class="info-box-item"><label>Asistencia Diaria Actual</label><span>${s.asistencia}</span></div>
+                    <div class="info-box-item">
+                        <label>Llegadas Tarde</label>
+                        <span id="s-val-tardanzas">${s.numTardanzas} tardanza(s)</span>
+                        <input type="number" id="s-inp-tardanzas" class="hidden" value="${s.numTardanzas}" min="0">
+                    </div>
+                    <div class="info-box-item">
+                        <label>Acumulado de Faltas</label>
+                        <span id="s-val-faltas">${s.numFaltas} falta(s)</span>
+                        <input type="number" id="s-inp-faltas" class="hidden" value="${s.numFaltas}" min="0" max="45">
+                    </div>
+                    <div class="info-box-item">
+                        <label>Porcentaje de Asistencia (Límite 45 faltas)</label>
+                        <span class="badge-status ${attendanceColorClass}" style="font-size: 0.95rem; padding: 6px 12px; display: inline-block; margin-top: 4px;">${porcentajeRedondeado}</span>
+                    </div>
+                    <div class="info-box-item full-width"><label>Certificados Médicos / Notas de Justificación</label><span id="s-val-cert">${s.certificadosMedicos}</span><input type="text" id="s-inp-cert" class="hidden" value="${s.certificadosMedicos}"></div>
+                `;
+            } else if (currentStudentSection === 5) {
+                titleEl.innerHTML = `<i class="fa-solid fa-shield-halved" style="color:var(--blue-card);"></i> 5. Registro Disciplinario, Convivencia y Seguimiento`;
+                container.innerHTML = `
+                    <div class="info-box-item full-width"><label>Historial de Apercibimientos / Partes</label><span id="s-val-hist">${s.historialDisciplinario}</span><input type="text" id="s-inp-hist" class="hidden" value="${s.historialDisciplinario}"></div>
+                    <div class="info-box-item full-width"><label>Observaciones Pedagógicas o de Conducta</label><span id="s-val-obs">${s.observacionesConducta}</span><textarea id="s-inp-obs" class="hidden" rows="2">${s.observacionesConducta}</textarea></div>
+                    <div class="info-box-item full-width"><label>Adecuaciones Curriculares / Situaciones Particulares</label><span id="s-val-adec">${s.adecuaciones}</span><input type="text" id="s-inp-adec" class="hidden" value="${s.adecuaciones}"></div>
+                `;
+            } else if (currentStudentSection === 6) {
+                titleEl.innerHTML = `<i class="fa-solid fa-graduation-cap" style="color:var(--blue-card);"></i> 6. Información Académica General (Orientativa)`;
+                container.innerHTML = `
+                    <div class="info-box-item"><label>Condición de Inscripción</label><span class="badge-status active">${s.condicion}</span></div>
+                    <div class="info-box-item"><label>Materias Previas / Pendientes</label><span>${s.materiasPrevias}</span></div>
+                `;
+            }
+
+            if (isEditingStudent) {
+                toggleStudentEditFields(true);
+            }
+        }
+
+        function toggleEditStudentMode() {
+            isEditingStudent = !isEditingStudent;
+            let btnEdit = document.getElementById('btn-toggle-edit-student');
+            let btnSave = document.getElementById('btn-save-student');
+
+            if (isEditingStudent) {
+                btnEdit.innerHTML = '<i class="fa-solid fa-xmark"></i> Cancelar Edición';
+                btnSave.classList.remove('hidden');
+                toggleStudentEditFields(true);
+            } else {
+                btnEdit.innerHTML = '<i class="fa-solid fa-pen"></i> Habilitar Edición';
+                btnSave.classList.add('hidden');
+                toggleStudentEditFields(false);
+            }
+        }
+
+        function toggleStudentEditFields(show) {
+            ['dom', 'tel1', 'tel2', 'retira', 'aut', 'apto', 'cert', 'hist', 'obs', 'adec', 'tardanzas', 'faltas'].forEach(id => {
+                let span = document.getElementById(`s-val-${id}`);
+                let inp = document.getElementById(`s-inp-${id}`);
+                if (span && inp) {
+                    if (show) {
+                        span.classList.add('hidden');
+                        inp.classList.remove('hidden');
+                    } else {
+                        span.classList.remove('hidden');
+                        inp.classList.add('hidden');
+                    }
+                }
+            });
+        }
+
+        function saveStudentChanges() {
+            let key = `${selectedYear} - ${selectedDivision}`;
+            let s = studentsDB[key][selectedStudentIndex];
+
+            if (document.getElementById('s-inp-dom')) s.domicilio = document.getElementById('s-inp-dom').value;
+            if (document.getElementById('s-inp-tel1')) s.telPrincipal = document.getElementById('s-inp-tel1').value;
+            if (document.getElementById('s-inp-tel2')) s.telSecundario = document.getElementById('s-inp-tel2').value;
+            if (document.getElementById('s-inp-retira')) s.retira = document.getElementById('s-inp-retira').value;
+            if (document.getElementById('s-inp-aut')) s.personasAutorizadas = document.getElementById('s-inp-aut').value;
+            if (document.getElementById('s-inp-apto')) s.aptoFisico = document.getElementById('s-inp-apto').value;
+            if (document.getElementById('s-inp-cert')) s.certificadosMedicos = document.getElementById('s-inp-cert').value;
+            if (document.getElementById('s-inp-hist')) s.historialDisciplinario = document.getElementById('s-inp-hist').value;
+            if (document.getElementById('s-inp-obs')) s.observacionesConducta = document.getElementById('s-inp-obs').value;
+            if (document.getElementById('s-inp-adec')) s.adecuaciones = document.getElementById('s-inp-adec').value;
+            if (document.getElementById('s-inp-tardanzas')) {
+                s.numTardanzas = parseInt(document.getElementById('s-inp-tardanzas').value) || 0;
+            }
+            if (document.getElementById('s-inp-faltas')) {
+                s.numFaltas = parseInt(document.getElementById('s-inp-faltas').value) || 0;
+                s.faltasAcumuladas = `${s.numFaltas} inasistencias injustificadas`;
+            }
+
+            isEditingStudent = false;
+            document.getElementById('btn-toggle-edit-student').innerHTML = '<i class="fa-solid fa-pen"></i> Habilitar Edición';
+            document.getElementById('btn-save-student').classList.add('hidden');
+
+            renderStudentSectionBoxes();
+            renderStudentsTable();
+        }
+
+        function closeStudentModal() {
+            document.getElementById('modal-student-detail').classList.add('hidden');
+        }
+
+        // CHAT / COMUNICACION
+        let chatData = {
+            "secretaria": { name: "Secretaría Académica", messages: [{ sender: "left", text: "Carlos, por favor revise las planillas de asistencia de 1° año." }, { sender: "right", text: "Hola Norma, ya las estoy subiendo al sistema." }] },
+            "direccion": { name: "Dirección - Dra. Policastro", messages: [{ sender: "left", text: "Recuerde el control de portón a la hora de entrada." }] },
+            "padres": { name: "Grupo Tutores 2° 1ª", messages: [{ sender: "left", text: "Buen día preceptor, mi hijo Juan Pérez se retira antes por médico." }, { sender: "right", text: "Recibido, ya confecciono la autorización de retiro." }] }
+        };
+        let currentActiveChat = "secretaria";
+
+        function renderContacts() {
+            const cl = document.getElementById('contact-list');
+            cl.innerHTML = '';
+            for(let k in chatData) {
+                let li = document.createElement('li');
+                li.className = `contact-item ${k === currentActiveChat ? 'active' : ''}`;
+                li.innerHTML = `<strong>${chatData[k].name}</strong>`;
+                li.onclick = () => { currentActiveChat = k; renderContacts(); loadChat(k); };
+                cl.appendChild(li);
+            }
+        }
+        function loadChat(k) {
+            currentActiveChat = k;
+            document.getElementById('active-chat-name').textContent = chatData[k].name;
+            let cm = document.getElementById('chat-messages');
+            cm.innerHTML = '';
+            chatData[k].messages.forEach(m => {
+                let b = document.createElement('div');
+                b.className = `chat-bubble ${m.sender}`;
+                b.textContent = m.text;
+                cm.appendChild(b);
+            });
+            cm.scrollTop = cm.scrollHeight;
+        }
+        function enviarMensaje(e) {
+            e.preventDefault();
+            let inp = document.getElementById('chat-input');
+            if(inp.value.trim() !== '') {
+                chatData[currentActiveChat].messages.push({ sender: 'right', text: inp.value.trim() });
+                inp.value = '';
+                loadChat(currentActiveChat);
+            }
+        }
+
+        // CALENDARIO
+        let currentMonth = 0;
+        const currentYear = 2026;
+        const monthNames = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
+        let schoolEvents = [
+            { id: 1, date: '2026-02-15', title: 'Reunión Informativa con Tutores', type: 'event-jornada', source: 'Preceptoría' },
+            { id: 2, date: '2026-03-01', title: 'Inicio de Ciclo Lectivo - Formación', type: 'event-general', source: 'Dirección' }
+        ];
+
+        function prevMonth() { if(currentMonth > 0) { currentMonth--; renderCalendar(); } }
+        function nextMonth() { if(currentMonth < 11) { currentMonth++; renderCalendar(); } }
+
+        function renderCalendar() {
+            document.getElementById('month-year-label').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+            ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'].forEach(d => {
+                let h = document.createElement('div'); h.className = 'day-head'; h.textContent = d; grid.appendChild(h);
+            });
+            let daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            for(let i=1; i<=daysInMonth; i++) {
+                let d = document.createElement('div');
+                d.className = 'day';
+                d.innerHTML = `<span>${i}</span>`;
+                let mStr = String(currentMonth + 1).padStart(2, '0');
+                let dStr = String(i).padStart(2, '0');
+                let fullDate = `${currentYear}-${mStr}-${dStr}`;
+                schoolEvents.filter(ev => ev.date === fullDate).forEach(ev => {
+                    let badge = document.createElement('div');
+                    badge.className = `event-badge ${ev.type}`;
+                    badge.textContent = ev.title;
+                    d.appendChild(badge);
+                });
+                grid.appendChild(d);
+            }
+            renderMonthlyEvents();
+        }
+
+        function renderMonthlyEvents() {
+            const list = document.getElementById('monthly-events-list');
+            list.innerHTML = '';
+            let mStr = String(currentMonth + 1).padStart(2, '0');
+            let events = schoolEvents.filter(e => e.date.startsWith(`${currentYear}-${mStr}`));
+            if(events.length === 0) {
+                list.innerHTML = '<p style="color:#888; font-size:0.9rem;">No hay eventos agendados para este mes.</p>';
+                return;
+            }
+            events.forEach(ev => {
+                let item = document.createElement('div');
+                item.className = 'event-list-item';
+                item.innerHTML = `
+                    <div class="event-item-info">
+                        <span class="event-date-chip">${ev.date.split('-')[2]} ${monthNames[currentMonth].substring(0,3)}</span>
+                        <div><strong>${ev.title}</strong><div style="font-size:0.75rem; color:#666;">Organiza: ${ev.source}</div></div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function ingresarAlSistema(e) {
+            if (e) e.preventDefault();
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            navigateTo('view-dashboard');
+            renderNotifications();
+            renderCalendar();
+            renderContacts();
+            loadChat(currentActiveChat);
+        }
+
+        function navigateTo(viewId) {
+            document.querySelectorAll('.content-view').forEach(v => { v.classList.add('hidden'); v.style.animation = 'none'; });
+            let active = document.getElementById(viewId);
+            if(active) {
+                active.classList.remove('hidden');
+                void active.offsetWidth;
+                active.style.animation = 'fadeIn 0.4s ease-in-out forwards';
+            }
+
+            if(viewId === 'view-asistencias') {
+                document.getElementById('preceptor-years-view').classList.remove('hidden');
+                document.getElementById('preceptor-divisions-view').classList.add('hidden');
+                document.getElementById('preceptor-table-view').classList.add('hidden');
+            }
+
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                if(b.getAttribute('data-target') === viewId) b.classList.add('active');
+                else b.classList.remove('active');
+            });
+
+            let sidebar = document.getElementById('sidebar');
+            let floatingBtn = document.getElementById('floating-menu-toggle');
+            if(viewId === 'view-dashboard' || viewId === 'view-perfil') {
+                sidebar.classList.add('hidden');
+                floatingBtn.classList.add('hidden');
+            } else {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.remove('collapsed');
+                floatingBtn.classList.add('hidden');
+            }
+        }
+
+        function toggleSidebar() {
+            let sidebar = document.getElementById('sidebar');
+            let floatingBtn = document.getElementById('floating-menu-toggle');
+            sidebar.classList.toggle('collapsed');
+            if (sidebar.classList.contains('collapsed')) {
+                setTimeout(() => { if (sidebar.classList.contains('collapsed')) floatingBtn.classList.add('hidden'); }, 300);
+            } else {
+                floatingBtn.classList.add('hidden');
+            }
+        }
+
+        function logout() {
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('view-login').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
